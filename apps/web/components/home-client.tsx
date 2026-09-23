@@ -205,28 +205,7 @@ export function HomeClient(): React.ReactNode {
   }, [connected, load]);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <header className="mb-2 flex items-baseline justify-between border-b border-[#ffb000]/25 pb-3">
-        <span className="text-xs tracking-[0.3em]">DEPARTURES / PRE-IPO CONVERSIONS</span>
-        <nav className="flex gap-4 text-xs tracking-[0.2em]">
-          <a className="underline underline-offset-4" href="/">
-            HOME
-          </a>
-          <a className="underline underline-offset-4" href="/ledger">
-            LEDGER
-          </a>
-        </nav>
-      </header>
-
-      <h1 className="mt-6 text-2xl font-bold tracking-wide sm:text-3xl">
-        Last call for pre-IPO holders
-      </h1>
-      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[#ffb000]/80">
-        PreStocks pre-IPO tokens must be converted into the public stock token before their
-        deadline, or they expire worthless. Connect your wallet to see what you hold and convert
-        before the gate closes.
-      </p>
-
+    <div className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
       <section className="mt-8 border border-[#ffb000]/25 bg-[#12100c] p-4">
         <h2 className="text-sm tracking-[0.3em] text-[#8a6100]">Connect wallet</h2>
         {connected === null ? (
@@ -290,6 +269,6 @@ export function HomeClient(): React.ReactNode {
           )}
         </section>
       )}
-    </main>
+    </div>
   );
 }

@@ -26,6 +26,9 @@ importers:
       '@lastcall/ledger':
         specifier: workspace:*
         version: link:../../packages/ledger
+      '@lastcall/sponsor':
+        specifier: workspace:*
+        version: link:../../packages/sponsor
       '@solana/wallet-standard-features':
         specifier: 1.5.0
         version: 1.5.0
@@ -38,6 +41,9 @@ importers:
       '@wallet-standard/base':
         specifier: 1.1.1
         version: 1.1.1
+      bs58:
+        specifier: ^4.0.1
+        version: 4.0.1
       next:
         specifier: 16.3.5
         version: 16.3.5(@types/node@24.13.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -132,6 +138,9 @@ importers:
       '@solana/web3.js':
         specifier: ^1.98.4
         version: 1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
+      bs58:
+        specifier: ^4.0.1
+        version: 4.0.1
     devDependencies:
       '@types/node':
         specifier: ^22.10.2

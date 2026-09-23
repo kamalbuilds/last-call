@@ -1,7 +1,9 @@
-import { Connection } from "@solana/web3.js";
+import { Connection, Keypair } from "@solana/web3.js";
+import bs58 from "bs58";
 import { buildSponsoredConversion } from "@lastcall/convert/src/sponsored.js";
+import { cosign } from "@lastcall/sponsor";
 import { getQuote, getSwapTransaction } from "@fineprint/exec";
-import { readLedger } from "@/lib/ledger";
+import { getLedger } from "@/lib/ledger";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -20,6 +22,13 @@ interface ConvertBody {
   owner?: unknown;
   fromMint?: unknown;
   amountRaw?: unknown;
+}
+
+function loadSponsor(): Keypair | null {
+  const encoded = process.env["SPONSOR_SECRET_KEY"];
+  if (encoded === undefined || encoded === "") return null;
+  const secret = (bs58 as unknown as { decode: (s: string) => Uint8Array }).decode(encoded.trim());
+  return Keypair.fromSecretKey(secret);
 }
 
 export async function POST(request: Request): Promise<Response> {
@@ -53,7 +62,7 @@ export async function POST(request: Request): Promise<Response> {
 
   let toMint: string | null = null;
   try {
-    const ledger = readLedger();
+    const ledger = await getLedger();
     const token = ledger.tokens.find((t) => t.mint === fromMint) ?? null;
     toMint = token?.conversion?.intoMint ?? null;
   } catch (err) {
@@ -67,13 +76,16 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const connection = new Connection(rpcUrl(), "confirmed");
-  const sponsor = process.env.SPONSOR_PUBKEY ?? "";
-  const feePayer = ADDRESS_PATTERN.test(sponsor) ? sponsor : owner;
 
-  // Sponsored path: the sponsor pays fees and ATA rent, the owner signs as the
-  // token authority. buildSponsoredConversion refuses owner===feePayer, so an
-  // unsponsored request falls through to a normal owner-paid Jupiter swap.
-  if (feePayer !== owner) {
+  let sponsor: Keypair | null = null;
+  try {
+    sponsor = loadSponsor();
+  } catch {
+    return Response.json({ error: "sponsor misconfigured" }, { status: 500 });
+  }
+
+  if (sponsor !== null) {
+    const feePayer = sponsor.publicKey.toBase58();
     try {
       const tx = await buildSponsoredConversion({
         connection,
@@ -83,8 +95,10 @@ export async function POST(request: Request): Promise<Response> {
         toMint,
         amountRaw: amount.toString(),
       });
+      const unsignedBase64 = Buffer.from(tx.serialize()).toString("base64");
+      const signedBase64 = await cosign(unsignedBase64, sponsor);
       return Response.json({
-        txBase64: Buffer.from(tx.serialize()).toString("base64"),
+        txBase64: signedBase64,
         feePayer,
         sponsored: true,
       });

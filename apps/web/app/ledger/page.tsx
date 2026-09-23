@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Countdown } from "@/components/countdown";
-import { daysSince, readLedger, shorten, type LedgerToken } from "@/lib/ledger";
+import { getLedger, shorten, type LedgerToken } from "@/lib/ledger";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -39,7 +39,7 @@ function formatDeadline(iso: string): string {
 }
 
 export default async function LedgerPage(): Promise<React.ReactNode> {
-  const ledger = readLedger();
+  const ledger = await getLedger();
   const nowMs = Date.now();
   const withDeadline = ledger.tokens
     .filter((t) => t.deadline !== null)
@@ -108,11 +108,6 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
                     <span className={`inline-block border px-2 py-0.5 text-xs ${statusClass(status)}`}>
                       {status}
                     </span>
-                    {status === "GATE CLOSED" && token.deadline !== null && (
-                      <div className="num mt-1 text-xs text-[#ff3b30]">
-                        expired {daysSince(token.deadline, nowMs)} days ago
-                      </div>
-                    )}
                   </td>
                   <td className="num px-4 py-3 text-right">
                     {Math.round(token.unconvertedInWallets).toLocaleString("en-US")}
@@ -127,7 +122,7 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
         </table>
       </div>
       <p className="num mt-2 text-xs text-[#8a6100]">
-        Board data: packages/ledger/out/ledger.json, generated {ledger.generatedAt}. Unconverted
+        Read from Solana mainnet and Jupiter at {ledger.generatedAt} UTC. Unconverted
         counts are whole tokens still sitting in wallets.
       </p>
 
@@ -160,7 +155,7 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
                       {holder.amount.toLocaleString("en-US", { maximumFractionDigits: 2 })}
                     </td>
                     <td className="num px-4 py-2.5 text-right">
-                      ${Math.round(holder.usd).toLocaleString("en-US")}
+                      ${Math.round(holder.usd ?? 0).toLocaleString("en-US")}
                     </td>
                     <td className="num px-4 py-2.5 text-right">
                       {holder.solBalance === 0 ? (

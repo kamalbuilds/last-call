@@ -1,10 +1,9 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
+import { buildLedger } from "@lastcall/ledger";
 
 export interface LedgerHolder {
   address: string;
   amount: number;
-  usd: number;
+  usd: number | null;
   solBalance: number;
   lastActive: string | null;
 }
@@ -22,11 +21,11 @@ export interface LedgerToken {
   status: string;
   deadline: string | null;
   conversion: LedgerConversion | null;
-  priceUsd?: number;
+  priceUsd?: number | null;
   supply?: number;
   poolHeld?: number;
   unconvertedInWallets: number;
-  unconvertedUsd?: number;
+  unconvertedUsd?: number | null;
   holderCount: number;
   holders?: LedgerHolder[];
 }
@@ -36,28 +35,18 @@ export interface LedgerFile {
   tokens: LedgerToken[];
 }
 
-/** Resolve packages/ledger/out/ledger.json from wherever Next runs us. */
-function ledgerPath(): string {
-  const candidates = [
-    path.resolve(process.cwd(), "../../packages/ledger/out/ledger.json"),
-    path.resolve(process.cwd(), "packages/ledger/out/ledger.json"),
-    path.resolve(process.cwd(), "../packages/ledger/out/ledger.json"),
-  ];
-  for (const p of candidates) {
-    try {
-      readFileSync(p);
-      return p;
-    } catch {
-      continue;
-    }
-  }
-  return candidates[0] as string;
-}
+const CACHE_TTL_MS = 5 * 60 * 1000;
 
-/** Read the ledger file at request time. Always live, never bundled. */
-export function readLedger(): LedgerFile {
-  const raw = readFileSync(ledgerPath(), "utf8");
-  return JSON.parse(raw) as LedgerFile;
+let cache: { value: LedgerFile; at: number } | null = null;
+
+export async function getLedger(): Promise<LedgerFile> {
+  const now = Date.now();
+  if (cache !== null && now - cache.at < CACHE_TTL_MS) {
+    return cache.value;
+  }
+  const fresh = (await buildLedger()) as unknown as LedgerFile;
+  cache = { value: fresh, at: now };
+  return fresh;
 }
 
 export function shorten(address: string): string {

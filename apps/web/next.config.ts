@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
     "@lastcall/convert",
     "@lastcall/holdings",
     "@lastcall/ledger",
+    "@lastcall/sponsor",
   ],
   webpack(config) {
     // Internal specifiers are written the NodeNext way (`./x.js` pointing at
