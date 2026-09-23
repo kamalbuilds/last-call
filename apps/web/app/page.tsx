@@ -3,6 +3,13 @@ import Link from "next/link";
 import { getHoldings, type HoldingRow } from "@lastcall/holdings";
 import { Countdown } from "@/components/countdown";
 import { HomeClient } from "@/components/home-client";
+import {
+  conversionTargetSymbol,
+  formatBalance,
+  formatReceive,
+  isDustWithoutQuote,
+  sortHoldings,
+} from "@/lib/holdings-view";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,15 +22,14 @@ const ADDRESS_PATTERN = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const STRANDED_WALLET = "CtB2LNTpRnD97zTcDqMnTih7usipMxrD5WYsdiC9V3Jb";
 
 function formatAmount(amount: number): string {
-  return amount.toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+  return formatBalance(amount);
 }
 
-function LookupRow({ row }: { row: HoldingRow }): React.ReactNode {
+function LookupRow({ row, rows }: { row: HoldingRow; rows: HoldingRow[] }): React.ReactNode {
+  const target = conversionTargetSymbol(row.convertsInto, rows);
+  const muted = isDustWithoutQuote(row);
   return (
-    <article className="border border-[#ffb000]/25 bg-[#12100c] p-4">
+    <article className={`border border-[#ffb000]/25 bg-[#12100c] p-4${muted ? " opacity-60" : ""}`}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="text-lg font-bold">
           {row.symbol}{" "}
@@ -48,16 +54,16 @@ function LookupRow({ row }: { row: HoldingRow }): React.ReactNode {
           </>
         )}
       </p>
-      {row.convertsInto !== null && (
+      {row.convertsInto !== null && target !== null && (
         <p className="num mt-1 text-sm text-[#ffb000]/80">
-          Converts into {row.convertsInto.slice(0, 4)}...{row.convertsInto.slice(-4)}
+          Converts into {target}
         </p>
       )}
       {row.quote !== null ? (
         <dl className="num mt-3 grid grid-cols-3 gap-2 text-sm">
           <div>
             <dt className="text-[11px] tracking-[0.2em] text-[#8a6100]">YOU RECEIVE</dt>
-            <dd>{row.quote.outAmountUi.toLocaleString("en-US", { maximumFractionDigits: 4 })}</dd>
+            <dd>{formatReceive(row.quote.outAmountUi, target)}</dd>
           </div>
           <div>
             <dt className="text-[11px] tracking-[0.2em] text-[#8a6100]">PRICE IMPACT</dt>
@@ -72,6 +78,11 @@ function LookupRow({ row }: { row: HoldingRow }): React.ReactNode {
         </dl>
       ) : (
         <p className="mt-3 text-sm text-[#8a6100]">No live quote right now.</p>
+      )}
+      {row.status === "expired" && (
+        <p className="mt-3 text-sm text-[#ffb000]/80">
+          Deadline passed. The issuer can remove these tokens at any time; converting now keeps the value.
+        </p>
       )}
     </article>
   );
@@ -162,8 +173,8 @@ export default async function HomePage({ searchParams }: PageProps): Promise<Rea
             )}
             {lookupError === null && rows !== null && rows.length > 0 && (
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                {rows.map((row) => (
-                  <LookupRow key={row.mint} row={row} />
+                {sortHoldings(rows).map((row) => (
+                  <LookupRow key={row.mint} row={row} rows={rows} />
                 ))}
               </div>
             )}

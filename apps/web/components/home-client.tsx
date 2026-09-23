@@ -4,6 +4,13 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import type { HoldingRow } from "@lastcall/holdings";
 import { Countdown } from "@/components/countdown";
 import { useWallet } from "@/lib/use-wallet";
+import {
+  conversionTargetSymbol,
+  formatBalance,
+  formatReceive,
+  isDustWithoutQuote,
+  sortHoldings,
+} from "@/lib/holdings-view";
 
 const TOKEN_2022_PROGRAM_ID = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 
@@ -46,10 +53,12 @@ function errorMessage(err: unknown): string {
 
 function HoldingCard({
   row,
+  rows,
   owner,
   signAndSend,
 }: {
   row: HoldingRow;
+  rows: HoldingRow[];
   owner: string;
   signAndSend: (transactionBase64: string) => Promise<string>;
 }): React.ReactNode {
@@ -93,10 +102,10 @@ function HoldingCard({
   }, [owner, row.mint, row.convertsInto, signAndSend]);
 
   return (
-    <article className="border border-[#ffb000]/25 bg-[#12100c] p-4">
+    <article className={`border border-[#ffb000]/25 bg-[#12100c] p-4${isDustWithoutQuote(row) ? " opacity-60" : ""}`}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="text-lg font-bold">
-          {row.symbol} <span className="num text-sm font-normal">× {row.amount.toLocaleString("en-US", { maximumFractionDigits: 4 })}</span>
+          {row.symbol} <span className="num text-sm font-normal">× {formatBalance(row.amount)}</span>
         </h3>
         <span className="text-xs tracking-[0.2em] text-[#8a6100]">
           {row.status === "expired" ? "GATE CLOSED" : row.status === "converting" ? "BOARDING" : "NOT SCHEDULED"}
@@ -112,14 +121,14 @@ function HoldingCard({
           </>
         )}
       </p>
-      {row.convertsInto !== null && (
-        <p className="mt-1 text-sm text-[#ffb000]/80">Converts into {row.convertsInto.slice(0, 4)}...{row.convertsInto.slice(-4)}</p>
+      {conversionTargetSymbol(row.convertsInto, rows) !== null && (
+        <p className="mt-1 text-sm text-[#ffb000]/80">Converts into {conversionTargetSymbol(row.convertsInto, rows)}</p>
       )}
       {row.quote !== null ? (
         <dl className="num mt-3 grid grid-cols-3 gap-2 text-sm">
           <div>
             <dt className="text-[11px] tracking-[0.2em] text-[#8a6100]">YOU RECEIVE</dt>
-            <dd>{row.quote.outAmountUi.toLocaleString("en-US", { maximumFractionDigits: 4 })}</dd>
+            <dd>{formatReceive(row.quote.outAmountUi, conversionTargetSymbol(row.convertsInto, rows))}</dd>
           </div>
           <div>
             <dt className="text-[11px] tracking-[0.2em] text-[#8a6100]">PRICE IMPACT</dt>
@@ -132,6 +141,11 @@ function HoldingCard({
         </dl>
       ) : (
         <p className="mt-3 text-sm text-[#8a6100]">No live quote right now.</p>
+      )}
+      {row.status === "expired" && (
+        <p className="mt-3 text-sm text-[#ffb000]/80">
+          Deadline passed. The issuer can remove these tokens at any time; converting now keeps the value.
+        </p>
       )}
       {row.convertsInto !== null && (
         <button
@@ -262,8 +276,8 @@ export function HomeClient(): React.ReactNode {
           )}
           {holdings !== null && holdings.length > 0 && (
             <div className="mt-4 grid gap-4 md:grid-cols-2">
-              {holdings.map((row) => (
-                <HoldingCard key={row.mint} row={row} owner={connected.address} signAndSend={signAndSend} />
+              {sortHoldings(holdings).map((row) => (
+                <HoldingCard key={row.mint} row={row} rows={holdings} owner={connected.address} signAndSend={signAndSend} />
               ))}
             </div>
           )}
