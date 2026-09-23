@@ -1,0 +1,1 @@
+{"name": "@lastcall/ledger", "private": true, "type": "module", "version": "0.1.0", "scripts": {"build": "tsx src/cli.ts", "typecheck": "tsc --noEmit"}, "dependencies": {}, "devDependencies": {"@types/node": "^22.10.2", "tsx": "^4.19.4", "typescript": "^5.7.2"}}
