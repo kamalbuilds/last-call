@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+/*
+  FINEPRINT surface tokens.
+
+  The subject is a legal-financial document, so the ground is ink and the text is
+  warm paper rather than clinical white. One accent only: `errata`, used where a
+  number is wrong or an authority is unilateral. `assent` appears exactly twice on
+  the page, on the settlement-speed verdict and on a passing post-condition.
+*/
+@theme {
+  --color-ink: #0a0a0b;
+  --color-ink-panel: #0f0f11;
+  --color-ink-raised: #141417;
+  --color-paper: #e9e6de;
+  --color-paper-dim: #a8a49a;
+  --color-paper-faint: #6d6a62;
+  --color-rule: rgba(233, 230, 222, 0.14);
+  --color-rule-strong: rgba(233, 230, 222, 0.34);
+  --color-errata: #ff4526;
+  --color-errata-wash: rgba(255, 69, 38, 0.09);
+  --color-assent: #5fa464;
+  --color-assent-wash: rgba(95, 164, 100, 0.09);
+  --color-caution: #d19a2e;
+
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Sized against the exhibit cell that holds them, not against the viewport: a
+     ten-character figure like +400.0000% has to fit a third of the column. */
+  --text-figure: clamp(2.1rem, 3.7vw, 3.15rem);
+  --text-figure--line-height: 0.95;
+  --text-figure-sm: clamp(1.6rem, 3.1vw, 2.5rem);
+  --text-figure-sm--line-height: 1;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-ink);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    /* next/font defines these on the element carrying its className, which is body. */
+    --font-newsreader: "Newsreader Fallback";
+    --font-jetbrains: "JetBrains Mono Fallback";
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    line-height: 1.55;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-errata);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-errata);
+    outline-offset: 2px;
+  }
+
+  /* The page is full of figures. Never let them shimmy between renders. */
+  table,
+  input,
+  output {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* Smallcaps mono label. The page's only eyebrow device, used on its own, never
+     stacked above a serif heading that says the same thing. */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    line-height: 1.2;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-paper-faint);
+  }
+
+  .label-strong {
+    color: var(--color-paper-dim);
+  }
+
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "zero" 1;
+  }
+
+  /* A filing's table of contents leader. Fills the gap with periods. */
+  .leader {
+    background-image: radial-gradient(circle, var(--color-rule-strong) 0.7px, transparent 0.7px);
+    background-position: bottom 0.28em left 0;
+    background-size: 5px 5px;
+    background-repeat: repeat-x;
+  }
+
+  /* Horizontal scroll for dense tables on narrow viewports, with an edge cue. */
+  .scroll-x {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-rule-strong) transparent;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scroll-x::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .scroll-x::-webkit-scrollbar-thumb {
+    background: var(--color-rule-strong);
+  }
+}
+
+/* The size dial in section 2. A measuring scale, not a pill slider. */
+.dial {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 28px;
+  background: transparent;
+  cursor: ew-resize;
+}
+
+.dial::-webkit-slider-runnable-track {
+  height: 28px;
+  background: linear-gradient(to bottom, transparent 13px, var(--color-rule-strong) 13px, var(--color-rule-strong) 14px, transparent 14px);
+}
+
+.dial::-moz-range-track {
+  height: 28px;
+  background: linear-gradient(to bottom, transparent 13px, var(--color-rule-strong) 13px, var(--color-rule-strong) 14px, transparent 14px);
+}
+
+.dial::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 3px;
+  height: 28px;
+  border-radius: 0;
+  background: var(--color-errata);
+  box-shadow: 0 0 0 1px var(--color-ink);
+}
+
+.dial::-moz-range-thumb {
+  width: 3px;
+  height: 28px;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-errata);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

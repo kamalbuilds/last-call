@@ -1,0 +1,343 @@
+{
+  "kind": "fineprint-dev-fixture",
+  "warning": "Development only. lib/data.ts reads this from disk with fs and only when NODE_ENV !== production, so it is never bundled and cannot reach a production build. @fineprint/core and @fineprint/cost replace it.",
+  "capturedAtUnix": 1789903440,
+  "rpcUrl": "https://api.mainnet-beta.solana.com",
+  "provenance": {
+    "mintFacts": "getAccountInfo(jsonParsed) against api.mainnet-beta.solana.com, apiVersion 4.3.0-rc.0, slots 448717594 and 448717596, 2026-09-20T11:24Z.",
+    "supplyCrossCheck": "PreStocks own API reports SPACEX supply 43712.579169835. Raw 8742.506795473 x operative multiplier 5 = 43712.533977365. Agreement to 4 decimal places.",
+    "ammImpact": "Jupiter lite-api.jup.ag/swap/v1/quote round trip on AAPLx/USDC, spikes/prestocks-nav-gap/FINDINGS.md. One route at one moment, not resampled. Per-leg split shown nowhere in the UI because only the round trip was measured.",
+    "thinnerNames": "The PreStocks pre-IPO names are far thinner than AAPLx. A NEURALINK round trip was measured at 59.12% in the same pass. The ladder below is therefore a floor, not a typical PreStocks cost.",
+    "tradFiFees": "Form CRS filings, firm identities confirmed via the SEC adviserinfo firm search API on 2026-09-20.",
+    "withheldFees": "transferFeeConfig.withheldAmount on each mint at the same read. Raw base units, 9 decimals. Fees already taken and sitting on the mint, withdrawable by the withdrawWithheldAuthority.",
+    "transferFee": "The mint carries two tiers: 50bps stamped epoch 1032 and 100bps stamped epoch 1039. The chain is in epoch 1038, so 50bps per transfer is what is charged today and 100bps is pending. Reading newerTransferFee as current reports a fee nobody is paying yet."
+  },
+  "facts": [
+    {
+      "symbol": "SPACEX",
+      "mint": "PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh",
+      "ownerProgram": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "decimals": 9,
+      "rawSupply": "8742506795473",
+      "effectiveSupply": 43712.533977365005,
+      "transferFee": {
+        "current": {
+          "epoch": 1039,
+          "transferFeeBasisPoints": 100,
+          "maximumFee": "18446744073709551615"
+        },
+        "previous": {
+          "epoch": 1032,
+          "transferFeeBasisPoints": 50,
+          "maximumFee": "18446744073709551615"
+        },
+        "currentBps": 100,
+        "roundTripBps": 200,
+        "uncapped": true
+      },
+      "scaledUiAmount": {
+        "multiplier": "1",
+        "newMultiplier": "5",
+        "newMultiplierEffectiveTimestamp": 1781065800,
+        "operativeMultiplier": 5
+      },
+      "powers": {
+        "permanentDelegate": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "pausableAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "paused": false,
+        "transferFeeAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "withdrawWithheldAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "transferHookAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "transferHookProgramId": null,
+        "scaledUiAmountAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "defaultAccountState": "initialized",
+        "singleKeyControlsAll": true,
+        "distinctAuthorities": [
+          "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc"
+        ]
+      },
+      "extensionsPresent": [
+        "permanentDelegate",
+        "defaultAccountState",
+        "transferFeeConfig",
+        "confidentialTransferMint",
+        "confidentialTransferFeeConfig",
+        "transferHook",
+        "scaledUiAmountConfig",
+        "metadataPointer",
+        "pausableConfig",
+        "tokenMetadata"
+      ],
+      "asOfUnix": 1789903440,
+      "slot": 448717594
+    },
+    {
+      "symbol": "OPENAI",
+      "mint": "PreweJYECqtQwBtpxHL171nL2K6umo692gTm7Q3rpgF",
+      "ownerProgram": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "decimals": 9,
+      "rawSupply": "1901883228852",
+      "effectiveSupply": 2826.4546617449982,
+      "transferFee": {
+        "current": {
+          "epoch": 1039,
+          "transferFeeBasisPoints": 100,
+          "maximumFee": "18446744073709551615"
+        },
+        "previous": {
+          "epoch": 1032,
+          "transferFeeBasisPoints": 50,
+          "maximumFee": "18446744073709551615"
+        },
+        "currentBps": 100,
+        "roundTripBps": 200,
+        "uncapped": true
+      },
+      "scaledUiAmount": {
+        "multiplier": "1",
+        "newMultiplier": "1.4861347",
+        "newMultiplierEffectiveTimestamp": 1784305800,
+        "operativeMultiplier": 1.4861347
+      },
+      "powers": {
+        "permanentDelegate": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "pausableAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "paused": false,
+        "transferFeeAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "withdrawWithheldAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "transferHookAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "transferHookProgramId": null,
+        "scaledUiAmountAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "defaultAccountState": "initialized",
+        "singleKeyControlsAll": true,
+        "distinctAuthorities": [
+          "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc"
+        ]
+      },
+      "extensionsPresent": [
+        "permanentDelegate",
+        "defaultAccountState",
+        "transferFeeConfig",
+        "confidentialTransferMint",
+        "confidentialTransferFeeConfig",
+        "transferHook",
+        "scaledUiAmountConfig",
+        "metadataPointer",
+        "pausableConfig",
+        "tokenMetadata"
+      ],
+      "asOfUnix": 1789903440,
+      "slot": 448717596
+    },
+    {
+      "symbol": "ANTHROPIC",
+      "mint": "Pren1FvFX6J3E4kXhJuCiAD5aDmGEb7qJRncwA8Lkhw",
+      "ownerProgram": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "decimals": 9,
+      "rawSupply": "7381882432484",
+      "effectiveSupply": 7381.882432484,
+      "transferFee": {
+        "current": {
+          "epoch": 1039,
+          "transferFeeBasisPoints": 100,
+          "maximumFee": "18446744073709551615"
+        },
+        "previous": {
+          "epoch": 1032,
+          "transferFeeBasisPoints": 50,
+          "maximumFee": "18446744073709551615"
+        },
+        "currentBps": 100,
+        "roundTripBps": 200,
+        "uncapped": true
+      },
+      "scaledUiAmount": {
+        "multiplier": "1",
+        "newMultiplier": "1",
+        "newMultiplierEffectiveTimestamp": 0,
+        "operativeMultiplier": 1
+      },
+      "powers": {
+        "permanentDelegate": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "pausableAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "paused": false,
+        "transferFeeAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "withdrawWithheldAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "transferHookAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "transferHookProgramId": null,
+        "scaledUiAmountAuthority": "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc",
+        "defaultAccountState": "initialized",
+        "singleKeyControlsAll": true,
+        "distinctAuthorities": [
+          "WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc"
+        ]
+      },
+      "extensionsPresent": [
+        "permanentDelegate",
+        "defaultAccountState",
+        "transferFeeConfig",
+        "confidentialTransferMint",
+        "confidentialTransferFeeConfig",
+        "transferHook",
+        "scaledUiAmountConfig",
+        "metadataPointer",
+        "pausableConfig",
+        "tokenMetadata"
+      ],
+      "asOfUnix": 1789903440,
+      "slot": 448717596
+    }
+  ],
+  "comparisons": [
+    {
+      "symbol": "SPACEX",
+      "naiveSupply": 8742.506795473,
+      "correctSupply": 43712.533977365005,
+      "errorPct": 400
+    },
+    {
+      "symbol": "OPENAI",
+      "naiveSupply": 1901.883228852,
+      "correctSupply": 2826.4546617449982,
+      "errorPct": 48.61347000000001
+    },
+    {
+      "symbol": "ANTHROPIC",
+      "naiveSupply": 7381.882432484,
+      "correctSupply": 7381.882432484,
+      "errorPct": 0
+    }
+  ],
+  "tradFi": [
+    {
+      "venue": "forge",
+      "buyFeePct": 2.0,
+      "sellFeePct": 2.0,
+      "daysToCloseLow": 42,
+      "daysToCloseHigh": 42,
+      "sourceUrl": "https://brokercheck.finra.org/firm/summary/134596",
+      "sourceNote": "Forge Securities LLC, CRD 134596. Form CRS: transaction fee of 2% to 4% per side. The 2% lower bound is used here so the on-chain path has to beat the traditional venue at its best, not its worst. 42 days is the average time to close reported in Forge Global FY2024 Form 10-K."
+    },
+    {
+      "venue": "equityzen",
+      "buyFeePct": 2.5,
+      "sellFeePct": 2.5,
+      "daysToCloseLow": 45,
+      "daysToCloseHigh": 60,
+      "sourceUrl": "https://brokercheck.finra.org/firm/summary/281820",
+      "sourceNote": "EquityZen Securities LLC, CRD 281820. Form CRS: buyer 2.0-2.5%, seller 2.5%. Upper bound of the buyer range used. Days to close is the 45-60 day industry range, not an EquityZen-published figure."
+    },
+    {
+      "venue": "hiive",
+      "buyFeePct": 4.85,
+      "sellFeePct": 5.75,
+      "daysToCloseLow": 45,
+      "daysToCloseHigh": 60,
+      "sourceUrl": "https://brokercheck.finra.org/firm/summary/316580",
+      "sourceNote": "Hiive Markets Limited, CRD 316580. Form CRS: up to 5.75% seller, up to 4.85% buyer. Upper bounds used. Days to close is the 45-60 day industry range."
+    }
+  ],
+  "verdicts": [
+    {
+      "symbol": "AAPLX",
+      "notionalUsd": 1000,
+      "onChain": {
+        "symbol": "AAPLX",
+        "notionalUsd": 1000,
+        "buyImpactBps": 14.3,
+        "sellImpactBps": 14.3,
+        "transferFeeBps": 100,
+        "totalRoundTripBps": 128.6,
+        "settlementSeconds": 13,
+        "route": "AAPLx -> USDC -> AAPLx, Jupiter lite-api/swap/v1/quote",
+        "quotedAtUnix": 1789903440
+      },
+      "bestTradFi": {
+        "venue": "forge",
+        "buyFeePct": 2.0,
+        "sellFeePct": 2.0,
+        "daysToCloseLow": 42,
+        "daysToCloseHigh": 42,
+        "sourceUrl": "https://brokercheck.finra.org/firm/summary/134596",
+        "sourceNote": "Forge Securities LLC, CRD 134596. Form CRS: transaction fee of 2% to 4% per side. The 2% lower bound is used here so the on-chain path has to beat the traditional venue at its best, not its worst. 42 days is the average time to close reported in Forge Global FY2024 Form 10-K."
+      },
+      "onChainTotalPct": 1.286,
+      "tradFiTotalPct": 4.0,
+      "advantagePct": 2.714,
+      "useOnChain": true,
+      "reason": "At $1,000 the measured on-chain round trip is 1.286%, against 4.00% at Forge, the cheapest published schedule. On-chain is cheaper by 2.714 points. The 100 bps issuer transfer fee is 78% of that on-chain total and does not shrink with size.",
+      "settlementAdvantage": "42 to 42 days against 13 seconds to finalized. Speed favours on-chain at every size and is unaffected by the cost verdict."
+    },
+    {
+      "symbol": "AAPLX",
+      "notionalUsd": 10000,
+      "onChain": {
+        "symbol": "AAPLX",
+        "notionalUsd": 10000,
+        "buyImpactBps": 28.95,
+        "sellImpactBps": 28.95,
+        "transferFeeBps": 100,
+        "totalRoundTripBps": 157.9,
+        "settlementSeconds": 13,
+        "route": "AAPLx -> USDC -> AAPLx, Jupiter lite-api/swap/v1/quote",
+        "quotedAtUnix": 1789903440
+      },
+      "bestTradFi": {
+        "venue": "forge",
+        "buyFeePct": 2.0,
+        "sellFeePct": 2.0,
+        "daysToCloseLow": 42,
+        "daysToCloseHigh": 42,
+        "sourceUrl": "https://brokercheck.finra.org/firm/summary/134596",
+        "sourceNote": "Forge Securities LLC, CRD 134596. Form CRS: transaction fee of 2% to 4% per side. The 2% lower bound is used here so the on-chain path has to beat the traditional venue at its best, not its worst. 42 days is the average time to close reported in Forge Global FY2024 Form 10-K."
+      },
+      "onChainTotalPct": 1.579,
+      "tradFiTotalPct": 4.0,
+      "advantagePct": 2.4210000000000003,
+      "useOnChain": true,
+      "reason": "At $10,000 the measured on-chain round trip is 1.579%, against 4.00% at Forge, the cheapest published schedule. On-chain is cheaper by 2.421 points. The 100 bps issuer transfer fee is 63% of that on-chain total and does not shrink with size.",
+      "settlementAdvantage": "42 to 42 days against 13 seconds to finalized. Speed favours on-chain at every size and is unaffected by the cost verdict."
+    },
+    {
+      "symbol": "AAPLX",
+      "notionalUsd": 100000,
+      "onChain": {
+        "symbol": "AAPLX",
+        "notionalUsd": 100000,
+        "buyImpactBps": 157.2,
+        "sellImpactBps": 157.2,
+        "transferFeeBps": 100,
+        "totalRoundTripBps": 414.4,
+        "settlementSeconds": 13,
+        "route": "AAPLx -> USDC -> AAPLx, Jupiter lite-api/swap/v1/quote",
+        "quotedAtUnix": 1789903440
+      },
+      "bestTradFi": {
+        "venue": "forge",
+        "buyFeePct": 2.0,
+        "sellFeePct": 2.0,
+        "daysToCloseLow": 42,
+        "daysToCloseHigh": 42,
+        "sourceUrl": "https://brokercheck.finra.org/firm/summary/134596",
+        "sourceNote": "Forge Securities LLC, CRD 134596. Form CRS: transaction fee of 2% to 4% per side. The 2% lower bound is used here so the on-chain path has to beat the traditional venue at its best, not its worst. 42 days is the average time to close reported in Forge Global FY2024 Form 10-K."
+      },
+      "onChainTotalPct": 4.144,
+      "tradFiTotalPct": 4.0,
+      "advantagePct": -0.14400000000000013,
+      "useOnChain": false,
+      "reason": "At $100,000 the measured on-chain round trip is 4.144%, against 4.00% at Forge. On-chain costs 0.144 points more. Do not do this on-chain for cost. The uncapped issuer fee does not shrink with size and the AMM impact grows with it.",
+      "settlementAdvantage": "42 to 42 days against 13 seconds to finalized. Speed favours on-chain at every size and is unaffected by the cost verdict."
+    }
+  ],
+  "withheldFeesRaw": {
+    "SPACEX": "41786",
+    "OPENAI": "582020330",
+    "ANTHROPIC": "697507383"
+  },
+  "crossCheck": {
+    "symbol": "SPACEX",
+    "issuerApiSupply": 43712.579169835,
+    "issuerApiUrl": "https://prestocks.com/metadata/spacex.json",
+    "note": "The issuer publishes a supply that already has the multiplier applied. It agrees with the decoded on-chain value to four decimal places, which is what closes the question of which multiplier field is operative."
+  }
+}
