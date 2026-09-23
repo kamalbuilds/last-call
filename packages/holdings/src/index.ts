@@ -1,32 +1,9 @@
-import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { LIFECYCLE } from "@lastcall/ledger";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { TOKEN_2022_PROGRAM_ID as SPL_TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { decodeMint, operativeMultiplier, readEpochPosition } from "@fineprint/core";
 
-// Reuses the ledger lifecycle data (packages/ledger/src/lifecycle.json) as the
-// source of status/deadline/convertsInto, and the core Token-2022 decode
-// (packages/core/src/decode.ts) for the scaled UI multiplier + transfer fee.
-// Resolved with plain string paths only: bundled server runtimes (Next route
-// handlers) run in a VM realm whose URL global is not Node's, so neither
-// `new URL(..., import.meta.url)` nor readFileSync(URL) survives there.
-const LIFECYCLE_CANDIDATES = [
-  "packages/ledger/src/lifecycle.json",
-  "../../packages/ledger/src/lifecycle.json",
-  "../ledger/src/lifecycle.json",
-];
-
-function lifecyclePath(): string {
-  const cwd = process.cwd();
-  for (const rel of LIFECYCLE_CANDIDATES) {
-    const candidate = resolve(cwd, rel);
-    if (existsSync(candidate)) return candidate;
-  }
-  throw new Error(
-    `lifecycle.json not found; tried ${LIFECYCLE_CANDIDATES.map((rel) => resolve(cwd, rel)).join(", ")}`,
-  );
-}
-
+// Lifecycle terms come from @lastcall/ledger; Token-2022 decoding from packages/core.
 interface LifecycleConversion {
   intoMint: string;
   intoSymbol?: string;
@@ -40,10 +17,7 @@ interface LifecycleEntry {
 }
 
 function loadLifecycle(): Map<string, LifecycleEntry> {
-  // fileURLToPath first: under bundled runtimes (Next server) the URL instance
-  // can come from a different VM realm than node:fs, and readFileSync rejects
-  // it. A plain path string has no realm attached.
-  const raw = JSON.parse(readFileSync(lifecyclePath(), "utf8")) as Record<string, LifecycleEntry>;
+  const raw = LIFECYCLE as unknown as Record<string, LifecycleEntry>;
   const byMint = new Map<string, LifecycleEntry>();
   for (const entry of Object.values(raw)) {
     byMint.set(entry.mint, entry);

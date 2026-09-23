@@ -1,6 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import lifecycleData from "./lifecycle.json" with { type: "json" };
 
 const PRESTOCKS_API_URL = "https://prestocks.com/api/prestocks";
 const JUP_PRICE_URL = "https://lite-api.jup.ag/price/v3";
@@ -164,37 +162,10 @@ function toFiniteNumber(value: unknown): number | null {
   return null;
 }
 
-function lifecycleCandidates(): string[] {
-  const candidates: string[] = [];
-  try {
-    const here = dirname(fileURLToPath(import.meta.url));
-    candidates.push(join(here, "lifecycle.json"));
-  } catch {
-    // import.meta.url unavailable in some bundled runtimes; fall through to cwd candidates.
-  }
-  const cwd = process.cwd();
-  candidates.push(
-    resolve(cwd, "packages/ledger/src/lifecycle.json"),
-    resolve(cwd, "../../packages/ledger/src/lifecycle.json"),
-    resolve(cwd, "../packages/ledger/src/lifecycle.json"),
-    resolve(cwd, "../ledger/src/lifecycle.json"),
-  );
-  return candidates;
-}
+export const LIFECYCLE = lifecycleData as Record<string, LifecycleEntry>;
 
 function loadLifecycle(): Record<string, LifecycleEntry> {
-  for (const candidate of lifecycleCandidates()) {
-    try {
-      if (existsSync(candidate)) {
-        return JSON.parse(readFileSync(candidate, "utf8")) as Record<string, LifecycleEntry>;
-      }
-    } catch {
-      continue;
-    }
-  }
-  throw new Error(
-    `lifecycle.json not found; tried ${lifecycleCandidates().join(", ")}`,
-  );
+  return LIFECYCLE;
 }
 
 export async function buildLedger(): Promise<LedgerFile> {
