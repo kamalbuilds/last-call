@@ -1,5 +1,5 @@
 {
-  "name": "@fineprint/web",
+  "name": "@lastcall/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,10 +9,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fineprint/core": "workspace:*",
-    "@fineprint/cost": "workspace:*",
     "@fineprint/exec": "workspace:*",
+    "@lastcall/convert": "workspace:*",
+    "@lastcall/holdings": "workspace:*",
+    "@lastcall/ledger": "workspace:*",
     "@solana/wallet-standard-features": "1.5.0",
+    "@solana/web3.js": "^1.98.4",
     "@wallet-standard/app": "1.1.1",
     "@wallet-standard/base": "1.1.1",
     "next": "16.3.5",

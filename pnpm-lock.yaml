@@ -6,22 +6,32 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    devDependencies:
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
 
   apps/web:
     dependencies:
-      '@fineprint/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@fineprint/cost':
-        specifier: workspace:*
-        version: link:../../packages/cost
       '@fineprint/exec':
         specifier: workspace:*
         version: link:../../packages/exec
+      '@lastcall/convert':
+        specifier: workspace:*
+        version: link:../../packages/convert
+      '@lastcall/holdings':
+        specifier: workspace:*
+        version: link:../../packages/holdings
+      '@lastcall/ledger':
+        specifier: workspace:*
+        version: link:../../packages/ledger
       '@solana/wallet-standard-features':
         specifier: 1.5.0
         version: 1.5.0
+      '@solana/web3.js':
+        specifier: ^1.98.4
+        version: 1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
       '@wallet-standard/app':
         specifier: 1.1.1
         version: 1.1.1
@@ -64,7 +74,7 @@ importers:
         version: link:../exec
       '@solana/spl-token':
         specifier: ^0.4.13
-        version: 0.4.15(@solana/web3.js@1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@6.0.6)
+        version: 0.4.15(@solana/web3.js@1.99.0(bufferutil@4.1.0)(typescript@5.9.3))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)
       '@solana/web3.js':
         specifier: ^1.98.4
         version: 1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
@@ -118,7 +128,7 @@ importers:
         version: link:../core
       '@solana/spl-token':
         specifier: ^0.4.13
-        version: 0.4.15(@solana/web3.js@1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@6.0.6)
+        version: 0.4.15(@solana/web3.js@1.99.0(bufferutil@4.1.0)(typescript@5.9.3))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)
       '@solana/web3.js':
         specifier: ^1.98.4
         version: 1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
@@ -133,6 +143,31 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.4)(lightningcss@1.32.0)
 
+  packages/holdings:
+    dependencies:
+      '@fineprint/core':
+        specifier: workspace:*
+        version: link:../core
+      '@lastcall/ledger':
+        specifier: workspace:*
+        version: link:../ledger
+      '@solana/spl-token':
+        specifier: ^0.4.13
+        version: 0.4.15(@solana/web3.js@1.99.0(bufferutil@4.1.0)(typescript@5.9.3))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)
+      '@solana/web3.js':
+        specifier: ^1.98.4
+        version: 1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.4
+      tsx:
+        specifier: ^4.19.4
+        version: 4.23.15
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   packages/ledger:
     devDependencies:
       '@types/node':
@@ -141,6 +176,19 @@ importers:
       tsx:
         specifier: ^4.19.4
         version: 4.23.15
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
+  packages/sponsor:
+    dependencies:
+      '@solana/web3.js':
+        specifier: ^1.98.4
+        version: 1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.4
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
@@ -2191,7 +2239,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.63.4':
     optional: true
 
-  '@solana/buffer-layout-utils@0.3.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)':
+  '@solana/buffer-layout-utils@0.3.0(bufferutil@4.1.0)(typescript@5.9.3)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
       '@solana/web3.js': 1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
@@ -2297,10 +2345,10 @@ snapshots:
       - fastestsmallesttextencoderdecoder
       - typescript
 
-  '@solana/spl-token@0.4.15(@solana/web3.js@1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@6.0.6)':
+  '@solana/spl-token@0.4.15(@solana/web3.js@1.99.0(bufferutil@4.1.0)(typescript@5.9.3))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
-      '@solana/buffer-layout-utils': 0.3.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
+      '@solana/buffer-layout-utils': 0.3.0(bufferutil@4.1.0)(typescript@5.9.3)
       '@solana/spl-token-group': 0.0.7(@solana/web3.js@1.99.0(bufferutil@4.1.0)(typescript@5.9.3))(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)
       '@solana/spl-token-metadata': 0.1.6(@solana/web3.js@1.99.0(bufferutil@4.1.0)(typescript@5.9.3))(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)
       '@solana/web3.js': 1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
