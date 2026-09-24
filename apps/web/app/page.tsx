@@ -4,6 +4,12 @@ import { Suspense } from "react";
 import { LookupSection } from "@/components/lookup-section";
 import { SplitFlap } from "@/components/split-flap";
 import { getLedger } from "@/lib/ledger";
+import { HomeStatStrip } from "@/components/home-stat-strip";
+import { HomeWhatsDue } from "@/components/home-whats-due";
+import { HomeHowItWorks } from "@/components/home-how-it-works";
+import { HomeConvertBlink } from "@/components/home-convert-blink";
+import { HomeWhySolana } from "@/components/home-why-solana";
+import { HomeFooter } from "@/components/home-footer";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -39,10 +45,7 @@ export default async function HomePage({ searchParams }: PageProps): Promise<Rea
 
   return (
     <main className="mx-auto max-w-[1200px] px-4 pb-12 sm:px-6">
-      <section
-        aria-label="Look up a wallet"
-        className={`grid content-start gap-8 pt-8 sm:pt-12 lg:grid-cols-[1fr_320px] ${lookupRequested ? "" : "min-h-[calc(100dvh-56px)]"}`}
-      >
+      <section aria-label="Look up a wallet" className="grid content-start gap-8 pt-8 sm:pt-12 lg:grid-cols-[1fr_320px]">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-3)]">Pre-IPO conversion window</p>
           <h1 className="mt-2 max-w-xl text-[28px] font-bold leading-tight text-[var(--text)] sm:text-[40px]">
@@ -90,6 +93,47 @@ export default async function HomePage({ searchParams }: PageProps): Promise<Rea
           <LookupSection wallet={wallet} />
         </Suspense>
       )}
+
+      <Suspense
+        fallback={
+          <section aria-label="Live stats" className="mt-12 min-w-0 sm:mt-16">
+            <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-3)]">Right now</p>
+            <p className="num mt-4 text-sm text-[var(--text-2)]">Reading live totals from chain and PreStocks...</p>
+          </section>
+        }
+      >
+        <HomeStatStrip />
+      </Suspense>
+
+      <Suspense
+        fallback={
+          <section aria-label="What is due" className="mt-12 min-w-0 sm:mt-16">
+            <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-3)]">What is due</p>
+            <p className="num mt-4 text-sm text-[var(--text-2)]">Reading on-chain events...</p>
+          </section>
+        }
+      >
+        <HomeWhatsDue />
+      </Suspense>
+
+      <HomeHowItWorks />
+
+      <Suspense
+        fallback={
+          <section aria-label="Convert from anywhere" className="mt-12 min-w-0 sm:mt-16">
+            <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-3)]">Convert from X, Discord, or any Blink client</p>
+            <p className="num mt-4 text-sm text-[var(--text-2)]">Reading the live action...</p>
+          </section>
+        }
+      >
+        <HomeConvertBlink />
+      </Suspense>
+
+      <HomeWhySolana />
+
+      <Suspense fallback={<footer className="mt-12 min-w-0 border-t border-[var(--line)] pt-4 sm:mt-16" />}>
+        <HomeFooter />
+      </Suspense>
     </main>
   );
 }
