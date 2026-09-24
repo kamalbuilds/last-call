@@ -20,6 +20,9 @@ importers:
       '@lastcall/convert':
         specifier: workspace:*
         version: link:../../packages/convert
+      '@lastcall/events':
+        specifier: workspace:*
+        version: link:../../packages/events
       '@lastcall/holdings':
         specifier: workspace:*
         version: link:../../packages/holdings
