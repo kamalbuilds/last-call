@@ -2,6 +2,9 @@
   "name": "weekend-guard",
   "private": true,
   "packageManager": "pnpm@11.22.0",
+  "scripts": {
+    "proof": "node scripts/proof.mjs"
+  },
   "workspaces": [
     "packages/*",
     "apps/*"

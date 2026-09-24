@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { Countdown } from "@/components/countdown";
 import { CountdownFlap } from "@/components/countdown-flap";
+import { GapHistory, GapHistoryFallback } from "@/components/gap-history";
 import { SolscanLink } from "@/components/solscan-link";
 import { SplitFlap } from "@/components/split-flap";
 import { Timeline } from "@/components/timeline";
@@ -133,6 +135,9 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
           <p className="num mt-1 text-sm text-[var(--text-3)]">
             Deadline {(spacex.deadline as string).slice(0, 10)}
           </p>
+          <Suspense fallback={<GapHistoryFallback />}>
+            <GapHistory />
+          </Suspense>
         </aside>
       </section>
 

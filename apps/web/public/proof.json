@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-09-24T15:41:24.908Z",
+  "checks": [
+    {
+      "name": "convert-sim",
+      "command": "pnpm --filter @lastcall/convert build-tx CtB2LNTpRnD97zTcDqMnTih7usipMxrD5WYsdiC9V3Jb 6GJbPKBtovsrMEEMcic5KMi5tswh9qSyT5ZYLMqEwNgt PreC1KtJ1sBPPqaeeqL6Qb15GTLCYVvyYEwxhdfTwfx PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh 1000000000 >/dev/null 2>&1 && node packages/convert/check.mjs",
+      "ok": true,
+      "output": "ok: holder SOL 0 lamports; PreC1K 139018412520 -> 138018412520; PreANx 1 -> 140450025; fee payer 6GJbPKBtovsrMEEMcic5KMi5tswh9qSyT5ZYLMqEwNgt; units 54923",
+      "ranAt": "2026-09-24T15:40:09.353Z"
+    },
+    {
+      "name": "sponsor-guard",
+      "command": "node packages/sponsor/check.mjs",
+      "ok": true,
+      "output": "ok: valid conversion co-signed; 3 malicious variants rejected",
+      "ranAt": "2026-09-24T15:40:17.322Z"
+    },
+    {
+      "name": "ledger-recount",
+      "command": "pnpm --filter @lastcall/ledger build >/dev/null 2>&1 && node packages/ledger/check.mjs",
+      "ok": true,
+      "output": "ok: XAI unconverted 1477.85 (independent 1477.85), usd 121707, holders listed 99",
+      "ranAt": "2026-09-24T15:40:52.073Z"
+    },
+    {
+      "name": "slice-plan",
+      "command": "node packages/slice/check.mjs",
+      "ok": true,
+      "output": "ok: $10k-equiv single-shot 10.5530 bps > threshold 5 bps > slice 1.8747 bps; 2 slices of 10963755075 raw; minGapMs=60000; estimatedSavingUi=13.947239 SPCXx (optimistic, assumes pool refill between slices)",
+      "ranAt": "2026-09-24T15:41:12.632Z"
+    },
+    {
+      "name": "events",
+      "command": "node packages/events/check.mjs",
+      "ok": true,
+      "output": "ok: all @lastcall/events checks passed",
+      "ranAt": "2026-09-24T15:41:24.908Z"
+    }
+  ]
+}
