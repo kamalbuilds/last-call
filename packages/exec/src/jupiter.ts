@@ -36,6 +36,7 @@ export interface GetQuoteParams {
   outputMint: string;
   amount: bigint;
   slippageBps: number;
+  onlyDirectRoutes?: boolean;
   signal?: AbortSignal;
 }
 
@@ -124,6 +125,7 @@ export async function getQuote(p: GetQuoteParams): Promise<JupQuote> {
     slippageBps: String(p.slippageBps),
     swapMode: "ExactIn",
   });
+  if (p.onlyDirectRoutes) params.set("onlyDirectRoutes", "true");
   const scoped = withTimeout(p.signal);
   try {
     const res = await fetch(`${QUOTE_URL}?${params.toString()}`, {

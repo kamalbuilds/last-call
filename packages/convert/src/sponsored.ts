@@ -171,12 +171,10 @@ export async function buildSponsoredConversion(
   }
 
   // Quote path reuses @fineprint/exec (same Jupiter Swap API v1 endpoint).
-  const quote = await getQuote({
-    inputMint: p.fromMint,
-    outputMint: p.toMint,
-    amount,
-    slippageBps: 300,
-  });
+  // Prefer the direct conversion pool: it is the issuer's conversion route and needs one
+  // new token account instead of two, which matters for holders with almost no SOL.
+  const base = { inputMint: p.fromMint, outputMint: p.toMint, amount, slippageBps: 300 };
+  const quote = await getQuote({ ...base, onlyDirectRoutes: true }).catch(() => getQuote(base));
 
   // Jupiter supports a separate `payer` for rent/fees; if this deployment
   // does not, fall back to rebuilding the rent payer locally below.
