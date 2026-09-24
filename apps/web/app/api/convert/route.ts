@@ -1,6 +1,6 @@
 import { Connection, Keypair } from "@solana/web3.js";
 import bs58 from "bs58";
-import { buildSponsoredConversion } from "@lastcall/convert/src/sponsored.js";
+import { buildSponsoredConversion } from "@lastcall/convert";
 import { cosign } from "@lastcall/sponsor";
 import { getQuote, getSwapTransaction } from "@fineprint/exec";
 import { getLedger } from "@/lib/ledger";

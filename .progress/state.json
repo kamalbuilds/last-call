@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "project": {
+    "name": "last-call",
+    "created": "2026-09-24T10:46:06+00:00"
+  },
+  "features": [
+    {
+      "id": "sponsored-convert",
+      "title": "Fee-sponsored and sliced conversion before PreStocks deadlines",
+      "priority": "high",
+      "tags": [],
+      "product": true,
+      "product_gate": {
+        "user": "XAI holders past the 2026-09-12 deadline, e.g. wallet CtB2LNTp (139.02 XAI, 0 SOL, 0 USDC)",
+        "buyer": "PreStocks token holders; PreStocks (retention of holders through conversion)",
+        "job": "convert expiring pre-IPO tokens before they expire worthless",
+        "verb": "sign one conversion transaction that lands SPACEX in the holder's wallet",
+        "wedge": "sponsor pays fee and rent; large SPACEX to SPCXx conversions split into slices",
+        "direct_alternative": "Jupiter swap or Phantom swap XAI to SPACEX",
+        "new_capability": "0-SOL wallets can convert (Jupiter Ultra returns Failed to get quotes for XAI to SPACEX); slicing avoids the 9.36% impact of a single 10k SPACEX to SPCXx swap",
+        "kill_shot": "most unconverted value sits in wallets that could pay fees; the fee sponsor serves about 27k of 116k",
+        "evidence": [
+          "chain: 1478.73 XAI unconverted, 1471 holders, 2026-09-24",
+          "33 of 34 zero-SOL top XAI wallets hold no USDC (getTokenAccountsByOwner, 2026-09-24)",
+          "Jupiter quote: SPACEX to SPCXx impact 0.00% at 1k, 9.36% at 10k, 15.49% at 50k",
+          "PreStocks X 2026-06-07: tokens expire worthless after conversion deadline"
+        ],
+        "decision": "pass",
+        "updated": "2026-09-24T10:46:06+00:00"
+      },
+      "blocked": null,
+      "notes": [],
+      "criteria": [
+        {
+          "kind": "auto",
+          "name": "convert-sim",
+          "cmd": "pnpm --filter @lastcall/convert build-tx CtB2LNTpRnD97zTcDqMnTih7usipMxrD5WYsdiC9V3Jb 6GJbPKBtovsrMEEMcic5KMi5tswh9qSyT5ZYLMqEwNgt PreC1KtJ1sBPPqaeeqL6Qb15GTLCYVvyYEwxhdfTwfx PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh 1000000000 >/dev/null 2>&1 && node packages/convert/check.mjs | grep -q '^ok:'",
+          "last_run": "2026-09-24T12:12:59+00:00",
+          "last_exit": 0,
+          "duration_ms": 31053,
+          "output_tail": "bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)"
+        },
+        {
+          "kind": "auto",
+          "name": "sponsor-guard",
+          "cmd": "node packages/sponsor/check.mjs | grep -q '^ok:'",
+          "last_run": "2026-09-24T12:13:13+00:00",
+          "last_exit": 0,
+          "duration_ms": 14407,
+          "output_tail": ""
+        },
+        {
+          "kind": "auto",
+          "name": "ledger-recount",
+          "cmd": "pnpm --filter @lastcall/ledger build >/dev/null 2>&1 && node packages/ledger/check.mjs | grep -q '^ok:'",
+          "last_run": "2026-09-24T12:14:10+00:00",
+          "last_exit": 0,
+          "duration_ms": 56761,
+          "output_tail": ""
+        },
+        {
+          "kind": "manual",
+          "name": "mainnet-conversion::real conversion finalized, Solscan link in README"
+        },
+        {
+          "kind": "auto",
+          "name": "slice-plan",
+          "cmd": "node packages/slice/check.mjs | grep -q '^ok:'",
+          "last_run": "2026-09-24T12:14:35+00:00",
+          "last_exit": 0,
+          "duration_ms": 24548,
+          "output_tail": "bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)"
+        },
+        {
+          "kind": "auto",
+          "name": "events",
+          "cmd": "node packages/events/check.mjs | grep -q '^ok:'",
+          "last_run": "2026-09-24T12:15:13+00:00",
+          "last_exit": 0,
+          "duration_ms": 37999,
+          "output_tail": "    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {\n  errno: -32,\n  code: 'EPIPE',\n  syscall: 'write'\n}\nNode.js v24.9.0"
+        }
+      ]
+    }
+  ],
+  "customers": [],
+  "history": [
+    {
+      "ts": "2026-09-24T10:46:06+00:00",
+      "checked": 1,
+      "failed_criteria": 0
+    },
+    {
+      "ts": "2026-09-24T11:19:39+00:00",
+      "checked": 1,
+      "failed_criteria": 1
+    },
+    {
+      "ts": "2026-09-24T11:23:54+00:00",
+      "checked": 1,
+      "failed_criteria": 0
+    },
+    {
+      "ts": "2026-09-24T12:15:13+00:00",
+      "checked": 1,
+      "failed_criteria": 0
+    }
+  ],
+  "updated": "2026-09-24T12:15:13+00:00"
+}

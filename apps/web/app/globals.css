@@ -1,37 +1,169 @@
 @import "tailwindcss";
 
-@theme {
-  --color-board: #0b0a08;
-  --color-board-panel: #12100c;
-  --color-board-line: rgba(255, 176, 0, 0.22);
-  --color-amber: #ffb000;
-  --color-amber-dim: #8a6100;
-  --color-gate-closed: #ff3b30;
+:root {
+  --bg: #0a0d14;
+  --panel: #111623;
+  --panel-2: #161c2b;
+  --line: #222a3b;
+  --text: #eceef2;
+  --text-2: #a3abba;
+  --text-3: #6b7385;
+  --closed: #ff5a4e;
+  --final: #f2b441;
+  --boarding: #37d38c;
+  --awaiting: #6b7385;
+  --accent: #ff5a4e;
 }
 
 @layer base {
   html {
-    background-color: var(--color-board);
+    background-color: var(--bg);
   }
 
   body {
-    background-color: var(--color-board);
-    color: var(--color-amber);
-    font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
   }
 
   table {
     font-variant-numeric: tabular-nums;
   }
+
+  a {
+    text-underline-offset: 4px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:active {
+    transform: scale(0.97);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--text-2);
+    outline-offset: 2px;
+  }
 }
 
 @layer components {
   .num {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
 
-  .board-row {
-    border-bottom: 1px solid var(--color-board-line);
+  .flap-row {
+    perspective: 600px;
+  }
+
+  .flap-tile {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    overflow: hidden;
+    transform-origin: center top;
+    animation: flap-in 260ms ease-out backwards;
+  }
+
+  .flap-tile::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background-color: var(--line);
+    pointer-events: none;
+  }
+
+  .chip {
+    display: inline-block;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background-color: var(--accent);
+    color: #0a0d14;
+    border-radius: 6px;
+    font-weight: 700;
+    transition: opacity 150ms ease-out, transform 150ms ease-out;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.88;
+  }
+
+  .btn-primary:active {
+    transform: scale(0.97);
+  }
+
+  .btn-ghost {
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-radius: 6px;
+    transition: opacity 150ms ease-out, transform 150ms ease-out;
+  }
+
+  .btn-ghost:hover {
+    opacity: 0.8;
+  }
+
+  .btn-ghost:active {
+    transform: scale(0.97);
+  }
+}
+
+@keyframes flap-in {
+  from {
+    transform: rotateX(80deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.rise {
+  animation: rise-in 260ms ease-out backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flap-tile,
+  .rise {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

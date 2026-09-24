@@ -29,6 +29,9 @@ importers:
       '@lastcall/sponsor':
         specifier: workspace:*
         version: link:../../packages/sponsor
+      '@phosphor-icons/react':
+        specifier: ^2.1.10
+        version: 2.1.10(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@solana/wallet-standard-features':
         specifier: 1.5.0
         version: 1.5.0
@@ -44,6 +47,9 @@ importers:
       bs58:
         specifier: ^4.0.1
         version: 4.0.1
+      geist:
+        specifier: ^1.7.2
+        version: 1.7.2(next@16.3.5(@types/node@24.13.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))
       next:
         specifier: 16.3.5
         version: 16.3.5(@types/node@24.13.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -127,6 +133,31 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.4)(lightningcss@1.32.0)
 
+  packages/events:
+    dependencies:
+      '@fineprint/core':
+        specifier: workspace:*
+        version: link:../core
+      '@lastcall/ledger':
+        specifier: workspace:*
+        version: link:../ledger
+      '@solana/spl-token':
+        specifier: ^0.4.13
+        version: 0.4.15(@solana/web3.js@1.99.0(bufferutil@4.1.0)(typescript@5.9.3))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)
+      '@solana/web3.js':
+        specifier: ^1.98.4
+        version: 1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.4
+      tsx:
+        specifier: ^4.19.4
+        version: 4.23.15
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   packages/exec:
     dependencies:
       '@fineprint/core':
@@ -178,6 +209,44 @@ importers:
         version: 5.9.3
 
   packages/ledger:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.4
+      tsx:
+        specifier: ^4.19.4
+        version: 4.23.15
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
+  packages/pyth:
+    dependencies:
+      '@fineprint/exec':
+        specifier: workspace:*
+        version: link:../exec
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.4
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.4)(lightningcss@1.32.0)
+
+  packages/slice:
+    dependencies:
+      '@fineprint/exec':
+        specifier: workspace:*
+        version: link:../exec
+      '@lastcall/convert':
+        specifier: workspace:*
+        version: link:../convert
+      '@solana/web3.js':
+        specifier: ^1.98.4
+        version: 1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
     devDependencies:
       '@types/node':
         specifier: ^22.10.2
@@ -756,6 +825,13 @@ packages:
   '@noble/hashes@1.8.0':
     resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
     engines: {node: ^14.21.3 || >=16}
+
+  '@phosphor-icons/react@2.1.10':
+    resolution: {integrity: sha512-vt8Tvq8GLjheAZZYa+YG/pW7HDbov8El/MANW8pOAz4eGxrwhnbfrQZq0Cp4q8zBEu8NIhHdnr+r8thnfRSNYA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>= 16.8'
+      react-dom: '>= 16.8'
 
   '@rollup/rollup-android-arm-eabi@4.63.4':
     resolution: {integrity: sha512-I+BSHzTAhKN2n7ZwGZsegGcZjDpLqFOMAtJz/u6uFGe0pUFbq56dEHjqJV/ZUdRJtNXNxA+hREUatZBvMR3Oiw==}
@@ -1357,6 +1433,11 @@ packages:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
+
+  geist@1.7.2:
+    resolution: {integrity: sha512-Gu5lDFa3pLRyoBlBPf0QIFHVdWAnpco7fS1bJm41jyLPFoguBgiubseUN2oLXMgqZ7uxAxDoXcHMhCY/fOTTgg==}
+    peerDependencies:
+      next: '>=13.2.0'
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -2173,6 +2254,11 @@ snapshots:
 
   '@noble/hashes@1.8.0': {}
 
+  '@phosphor-icons/react@2.1.10(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
+    dependencies:
+      react: 19.3.0
+      react-dom: 19.3.0(react@19.3.0)
+
   '@rollup/rollup-android-arm-eabi@4.63.4':
     optional: true
 
@@ -2775,6 +2861,10 @@ snapshots:
 
   fsevents@2.3.3:
     optional: true
+
+  geist@1.7.2(next@16.3.5(@types/node@24.13.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)):
+    dependencies:
+      next: 16.3.5(@types/node@24.13.6)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
 
   graceful-fs@4.2.11: {}
 
