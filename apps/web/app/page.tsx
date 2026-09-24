@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ConnectArea } from "@/components/connect-area";
 import { LookupSection } from "@/components/lookup-section";
 import { SplitFlap } from "@/components/split-flap";
 import { getLedger } from "@/lib/ledger";
@@ -39,21 +38,14 @@ export default async function HomePage({ searchParams }: PageProps): Promise<Rea
   }
 
   return (
-    <main className="mx-auto max-w-[1200px] px-4 pb-10 sm:px-6">
-      <header className="flex items-baseline justify-between gap-4 border-b border-[var(--line)] py-3">
-        <span className="text-sm text-[var(--text-2)]">Last call</span>
-        <nav className="flex gap-4 text-sm">
-          <Link className="underline" href="/">Home</Link>
-          <Link className="underline" href="/ledger">Ledger</Link>
-        </nav>
-      </header>
-
+    <main className="mx-auto max-w-[1200px] px-4 pb-12 sm:px-6">
       <section
         aria-label="Look up a wallet"
-        className={`grid content-start gap-8 pt-10 sm:pt-14 lg:grid-cols-[1fr_320px] ${lookupRequested ? "" : "min-h-[100dvh]"}`}
+        className={`grid content-start gap-8 pt-8 sm:pt-12 lg:grid-cols-[1fr_320px] ${lookupRequested ? "" : "min-h-[calc(100dvh-56px)]"}`}
       >
         <div className="min-w-0">
-          <h1 className="max-w-xl text-4xl font-bold leading-tight text-[var(--text)] sm:text-5xl">
+          <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-3)]">Pre-IPO conversion window</p>
+          <h1 className="mt-2 max-w-xl text-[28px] font-bold leading-tight text-[var(--text)] sm:text-[40px]">
             Your pre-IPO tokens have a deadline.
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-[var(--text-2)]">
@@ -66,9 +58,9 @@ export default async function HomePage({ searchParams }: PageProps): Promise<Rea
               defaultValue={wallet}
               spellCheck={false}
               autoComplete="off"
-              className="num min-w-0 flex-1 rounded-md border border-[var(--line)] bg-[var(--panel)] px-3 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--text-3)]"
+              className="num min-w-0 flex-1 rounded-md border border-[var(--line)] bg-[var(--panel)] px-3 py-3 text-sm text-[var(--text)] placeholder:text-[var(--text-3)] focus-visible:border-[var(--text-2)]"
             />
-            <button type="submit" className="btn-primary px-5 py-2.5 text-sm">
+            <button type="submit" className="btn-primary px-6 py-3 text-sm">
               Look up
             </button>
           </form>
@@ -78,7 +70,7 @@ export default async function HomePage({ searchParams }: PageProps): Promise<Rea
             </Link>
           </p>
         </div>
-        <aside aria-label="Stranded value" className="h-fit min-w-0 rounded-md border border-[var(--line)] bg-[var(--panel)] p-4 sm:p-5">
+        <aside aria-label="Stranded value" className="card h-fit min-w-0 p-4 sm:p-6">
           <p className="text-sm text-[var(--text-3)]">Stranded XAI right now</p>
           {strandedShort !== null ? (
             <Link href="/ledger" className="mt-3 inline-block" aria-label={`See the ledger board, ${strandedFull ?? strandedShort} stranded`}>
@@ -98,10 +90,6 @@ export default async function HomePage({ searchParams }: PageProps): Promise<Rea
           <LookupSection wallet={wallet} />
         </Suspense>
       )}
-
-      <div className="mt-10">
-        <ConnectArea />
-      </div>
     </main>
   );
 }

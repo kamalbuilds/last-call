@@ -103,22 +103,10 @@ export default async function InboxPage({ searchParams }: PageProps): Promise<Re
   const hasWallet = wallet !== "";
 
   return (
-    <main className="mx-auto max-w-[1200px] px-4 pb-10 sm:px-6">
-      <header className="flex items-baseline justify-between gap-4 border-b border-[var(--line)] py-3">
-        <span className="text-sm text-[var(--text-2)]">Last call</span>
-        <nav className="flex gap-4 text-sm">
-          <Link className="underline" href="/">
-            Home
-          </Link>
-          <Link className="underline" href="/ledger">
-            Ledger
-          </Link>
-        </nav>
-      </header>
-
+    <main className="mx-auto max-w-[1200px] px-4 pb-12 sm:px-6">
       <section aria-label="Corporate-action inbox" className="mt-8 min-w-0">
         <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-3)]">Corporate-action inbox</p>
-        <h1 className="mt-2 max-w-xl text-4xl font-bold leading-tight text-[var(--text)]">
+        <h1 className="mt-2 max-w-xl text-[28px] font-bold leading-tight text-[var(--text)] sm:text-[40px]">
           {hasWallet ? "Your inbox." : "Every deadline, on chain."}
         </h1>
         <p className="mt-3 max-w-xl text-base leading-relaxed text-[var(--text-2)]">
@@ -133,9 +121,9 @@ export default async function InboxPage({ searchParams }: PageProps): Promise<Re
             defaultValue={wallet}
             spellCheck={false}
             autoComplete="off"
-            className="num min-w-0 flex-1 rounded-md border border-[var(--line)] bg-[var(--panel)] px-3 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--text-3)]"
+            className="num min-w-0 flex-1 rounded-md border border-[var(--line)] bg-[var(--panel)] px-3 py-3 text-sm text-[var(--text)] placeholder:text-[var(--text-3)] focus-visible:border-[var(--text-2)]"
           />
-          <button type="submit" className="btn-primary px-5 py-2.5 text-sm">
+          <button type="submit" className="btn-primary px-6 py-3 text-sm">
             Look up
           </button>
         </form>

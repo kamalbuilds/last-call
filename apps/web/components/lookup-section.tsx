@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { getHoldings } from "@lastcall/holdings";
 import { WalletLookup } from "@/components/wallet-lookup";
 import { shorten } from "@/lib/ledger";
@@ -11,14 +12,20 @@ export async function LookupSection({ wallet }: { wallet: string }): Promise<Rea
   }
   try {
     const rows = await getHoldings(wallet);
+    const heads = await headers();
+    const host = heads.get("x-forwarded-host") ?? heads.get("host") ?? "";
+    const proto =
+      heads.get("x-forwarded-proto") ??
+      (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
+    const siteUrl = host === "" ? "" : `${proto}://${host}`;
     return (
       <>
-        <h2 className="num mt-8 text-lg font-bold text-[var(--text)]">
+        <h2 className="num mt-8 text-xl font-bold text-[var(--text)]">
           <a href={`https://solscan.io/account/${wallet}`} target="_blank" rel="noreferrer" className="underline">
             Wallet {shorten(wallet)}
           </a>
         </h2>
-        <WalletLookup owner={wallet} rows={rows} />
+        <WalletLookup owner={wallet} rows={rows} siteUrl={siteUrl} />
       </>
     );
   } catch (err) {

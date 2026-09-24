@@ -26,7 +26,7 @@ export function ProofCheckRow({ check }: { check: ProofCheck }): React.ReactNode
   const color = check.ok ? "var(--boarding)" : "var(--closed)";
   const StatusIcon = check.ok ? CheckCircle : XCircle;
   return (
-    <article className="min-w-0 rounded-md border border-[var(--line)] bg-[var(--panel)] p-4 sm:p-5">
+    <article className="min-w-0 card p-4 sm:p-6">
       <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
         <h2 className="num text-base font-bold text-[var(--text)]">{check.name}</h2>
         <span className="chip" style={{ color, borderColor: color }}>
@@ -64,7 +64,7 @@ export function ProofAccountRow({
   address: string;
 }): React.ReactNode {
   return (
-    <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1 rounded-md border border-[var(--line)] bg-[var(--panel)] p-4">
+    <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1 card p-4">
       <span className="text-sm text-[var(--text-3)]">{label}</span>
       <a
         href={`https://solscan.io/account/${address}`}

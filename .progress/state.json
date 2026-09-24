@@ -82,6 +82,33 @@
           "output_tail": "    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {\n  errno: -32,\n  code: 'EPIPE',\n  syscall: 'write'\n}\nNode.js v24.9.0"
         }
       ]
+    },
+    {
+      "id": "gap-history",
+      "title": "SpaceX conversion-gap history",
+      "priority": "high",
+      "tags": [],
+      "product": true,
+      "product_gate": {
+        "user": "Pre-IPO token holders",
+        "buyer": "Token holders deciding whether to convert",
+        "job": "Compare the SPACEX and SPCXx prices before converting",
+        "verb": "See the gap trend and 30-day signal",
+        "wedge": "Daily historical gap plus a live 30-day decision signal",
+        "direct_alternative": "Manual price lookup in token dashboards",
+        "new_capability": "A single dated gap series that aligns both tokens and explains whether today's gap is near its 30-day low",
+        "kill_shot": "If both price APIs become unavailable or the pool history is too sparse, the feature is misleading",
+        "evidence": [
+          "user requirement in check-gap.mjs",
+          "live GeckoTerminal pool and OHLCV responses",
+          "live Jupiter price v3 response"
+        ],
+        "decision": "pass",
+        "updated": "2026-09-24T15:52:12+00:00"
+      },
+      "blocked": null,
+      "notes": [],
+      "criteria": []
     }
   ],
   "customers": [],
@@ -105,7 +132,22 @@
       "ts": "2026-09-24T12:15:13+00:00",
       "checked": 1,
       "failed_criteria": 0
+    },
+    {
+      "ts": "2026-09-24T15:52:12+00:00",
+      "checked": 1,
+      "failed_criteria": 0
+    },
+    {
+      "ts": "2026-09-24T16:21:32+00:00",
+      "checked": 1,
+      "failed_criteria": 0
+    },
+    {
+      "ts": "2026-09-24T17:52:23+00:00",
+      "checked": 1,
+      "failed_criteria": 0
     }
   ],
-  "updated": "2026-09-24T12:15:13+00:00"
+  "updated": "2026-09-24T17:52:23+00:00"
 }

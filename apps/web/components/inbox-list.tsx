@@ -16,7 +16,7 @@ function EventCard({ event, wallet }: { event: LastCallEvent; wallet: string | n
   if (event.type === "conversion") {
     const expired = event.expired;
     return (
-      <article className="min-w-0 rounded-md border border-[var(--line)] bg-[var(--panel)] p-4">
+      <article className="min-w-0 card p-4">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <p className="num text-base font-bold text-[var(--text)]">{event.symbol}</p>
           {expired ? (
@@ -61,7 +61,7 @@ function EventCard({ event, wallet }: { event: LastCallEvent; wallet: string | n
 
   if (event.type === "fee_change") {
     return (
-      <article className="min-w-0 rounded-md border border-[var(--line)] bg-[var(--panel)] p-4">
+      <article className="min-w-0 card p-4">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <p className="num text-base font-bold text-[var(--text)]">{event.symbol}</p>
           <Chip color="var(--text-2)" border="var(--line)">
@@ -82,7 +82,7 @@ function EventCard({ event, wallet }: { event: LastCallEvent; wallet: string | n
 
   if (event.type === "paused") {
     return (
-      <article className="min-w-0 rounded-md border border-[var(--line)] bg-[var(--panel)] p-4">
+      <article className="min-w-0 card p-4">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <p className="num text-base font-bold text-[var(--text)]">{event.symbol}</p>
           <Chip color="var(--closed)">PAUSED</Chip>
@@ -103,7 +103,7 @@ function EventCard({ event, wallet }: { event: LastCallEvent; wallet: string | n
   const label = event.percentChange > 0 ? "DIVIDEND" : event.percentChange < 0 ? "SPLIT" : "MULTIPLIER UPDATE";
   const plain = event.percentChange > 0 ? "Dividend" : event.percentChange < 0 ? "Split" : "Multiplier update";
   return (
-    <article className="min-w-0 rounded-md border border-[var(--line)] bg-[var(--panel)] p-4">
+    <article className="min-w-0 card p-4">
       <div className="flex min-w-0 flex-wrap items-center gap-2">
         <p className="num text-base font-bold text-[var(--text)]">{event.symbol}</p>
         <Chip color="var(--text-2)" border="var(--line)">

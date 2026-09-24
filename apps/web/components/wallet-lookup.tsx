@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Connection, PublicKey } from "@solana/web3.js";
 import type { HoldingRow } from "@lastcall/holdings";
 import { Countdown } from "@/components/countdown";
+import { BlinkShareLink } from "@/components/blink-share-link";
 import { useWallet } from "@/lib/use-wallet";
 import {
   conversionTargetSymbol,
@@ -59,10 +60,12 @@ function ConvertCard({
   row,
   rows,
   owner,
+  siteUrl,
 }: {
   row: HoldingRow;
   rows: HoldingRow[];
   owner: string;
+  siteUrl: string;
 }): React.ReactNode {
   const { connected, signAndSend } = useWallet();
   const [converting, setConverting] = useState<boolean>(false);
@@ -114,10 +117,10 @@ function ConvertCard({
 
   return (
     <article
-      className={`rounded-md border border-[var(--line)] bg-[var(--panel)] p-4 sm:p-5${muted ? " opacity-60" : ""}`}
+      className={`card p-4 sm:p-6${muted ? " opacity-60" : ""}`}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="text-lg font-bold text-[var(--text)]">
+        <h3 className="text-xl font-bold text-[var(--text)]">
           {row.symbol} <span className="num text-sm font-normal text-[var(--text-2)]">{formatBalance(row.amount)}</span>
         </h3>
         <span className="chip" style={{ color: chip.color, borderColor: chip.color }}>
@@ -161,7 +164,7 @@ function ConvertCard({
         type="button"
         onClick={() => void convert()}
         disabled={converting}
-        className="btn-primary mt-4 w-full px-4 py-2.5 text-sm sm:w-auto sm:min-w-64 disabled:opacity-50"
+        className="btn-primary mt-4 w-full px-4 py-3 text-sm sm:w-auto sm:min-w-64 disabled:opacity-50"
       >
         {converting
           ? "Converting"
@@ -170,6 +173,9 @@ function ConvertCard({
             : `Convert ${formatBalance(row.amount)} ${row.symbol} to ${target ?? "stock"}`}
       </button>
       {failure !== null && <p className="mt-3 text-sm text-[var(--closed)]">{failure}</p>}
+      <p className="mt-2">
+        <BlinkShareLink token={row.symbol} siteUrl={siteUrl} />
+      </p>
       {signature !== null && (
         <p className="num mt-3 break-all text-sm text-[var(--text-2)]">
           Confirmed:{" "}
@@ -188,7 +194,15 @@ function ConvertCard({
 }
 
 /** Server-fetched holdings for a looked-up wallet, with per-card convert actions. */
-export function WalletLookup({ owner, rows }: { owner: string; rows: HoldingRow[] }): React.ReactNode {
+export function WalletLookup({
+  owner,
+  rows,
+  siteUrl,
+}: {
+  owner: string;
+  rows: HoldingRow[];
+  siteUrl: string;
+}): React.ReactNode {
   const sorted = sortHoldings(rows);
   const actionable = sorted.filter((r) => r.convertsInto !== null);
   const waiting = sorted.filter((r) => r.convertsInto === null);
@@ -200,10 +214,10 @@ export function WalletLookup({ owner, rows }: { owner: string; rows: HoldingRow[
   return (
     <div className="mt-4 flex flex-col gap-4">
       {actionable.map((row) => (
-        <ConvertCard key={row.mint} row={row} rows={rows} owner={owner} />
+        <ConvertCard key={row.mint} row={row} rows={rows} owner={owner} siteUrl={siteUrl} />
       ))}
       {waiting.length > 0 && (
-        <p className="num rounded-md border border-[var(--line)] bg-[var(--panel)] p-4 text-sm leading-relaxed text-[var(--text-2)]">
+        <p className="num card p-4 text-sm leading-relaxed text-[var(--text-2)]">
           Awaiting IPO: {waiting.map((r) => `${r.symbol} ${formatBalance(r.amount)}`).join(", ")}
         </p>
       )}

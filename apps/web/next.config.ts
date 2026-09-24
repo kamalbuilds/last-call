@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     "@fineprint/core",
     "@fineprint/exec",
     "@lastcall/convert",
+    "@lastcall/events",
     "@lastcall/holdings",
     "@lastcall/ledger",
     "@lastcall/sponsor",

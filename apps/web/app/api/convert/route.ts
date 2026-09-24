@@ -1,18 +1,11 @@
-import { Connection, Keypair } from "@solana/web3.js";
-import bs58 from "bs58";
-import { buildSponsoredConversion } from "@lastcall/convert";
-import { cosign } from "@lastcall/sponsor";
-import { getQuote, getSwapTransaction } from "@fineprint/exec";
+import { Connection } from "@solana/web3.js";
 import { getLedger } from "@/lib/ledger";
+import { buildConversionTransaction, rpcUrl } from "@/app/api/actions/convert/convert";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const ADDRESS_PATTERN = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
-
-function rpcUrl(): string {
-  return process.env.SOLANA_RPC_URL ?? "https://api.mainnet-beta.solana.com";
-}
 
 function errorMessage(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
@@ -22,13 +15,6 @@ interface ConvertBody {
   owner?: unknown;
   fromMint?: unknown;
   amountRaw?: unknown;
-}
-
-function loadSponsor(): Keypair | null {
-  const encoded = process.env["SPONSOR_SECRET_KEY"];
-  if (encoded === undefined || encoded === "") return null;
-  const secret = (bs58 as unknown as { decode: (s: string) => Uint8Array }).decode(encoded.trim());
-  return Keypair.fromSecretKey(secret);
 }
 
 export async function POST(request: Request): Promise<Response> {
@@ -77,50 +63,20 @@ export async function POST(request: Request): Promise<Response> {
 
   const connection = new Connection(rpcUrl(), "confirmed");
 
-  let sponsor: Keypair | null = null;
   try {
-    sponsor = loadSponsor();
-  } catch {
-    return Response.json({ error: "sponsor misconfigured" }, { status: 500 });
-  }
-
-  if (sponsor !== null) {
-    const feePayer = sponsor.publicKey.toBase58();
-    try {
-      const tx = await buildSponsoredConversion({
-        connection,
-        owner,
-        feePayer,
-        fromMint,
-        toMint,
-        amountRaw: amount.toString(),
-      });
-      const unsignedBase64 = Buffer.from(tx.serialize()).toString("base64");
-      const signedBase64 = await cosign(unsignedBase64, sponsor);
-      return Response.json({
-        txBase64: signedBase64,
-        feePayer,
-        sponsored: true,
-      });
-    } catch (err) {
-      return Response.json({ error: errorMessage(err) }, { status: 502 });
-    }
-  }
-
-  try {
-    const quote = await getQuote({
-      inputMint: fromMint,
-      outputMint: toMint,
-      amount,
-      slippageBps: 300,
+    const built = await buildConversionTransaction({
+      connection,
+      owner,
+      fromMint,
+      toMint,
+      amountRaw: amount,
     });
-    const swap = await getSwapTransaction({ quote, userPublicKey: owner });
-    return Response.json({
-      txBase64: swap.swapTransaction,
-      feePayer: owner,
-      sponsored: false,
-    });
+    return Response.json(built);
   } catch (err) {
-    return Response.json({ error: errorMessage(err) }, { status: 502 });
+    const message = errorMessage(err);
+    if (message === "sponsor misconfigured") {
+      return Response.json({ error: message }, { status: 500 });
+    }
+    return Response.json({ error: message }, { status: 502 });
   }
 }

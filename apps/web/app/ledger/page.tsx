@@ -97,16 +97,8 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
   const topXai = (xai.holders ?? []).slice().sort((a, b) => b.amount - a.amount).slice(0, 20);
 
   return (
-    <main className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 sm:py-10">
-      <header className="flex items-baseline justify-between gap-4 border-b border-[var(--line)] pb-3">
-        <span className="text-sm text-[var(--text-2)]">Last call</span>
-        <nav className="flex gap-4 text-sm">
-          <Link className="underline" href="/">Home</Link>
-          <Link className="underline" href="/ledger">Ledger</Link>
-        </nav>
-      </header>
-
-      <section aria-label="Stranded XAI" className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
+    <main className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 sm:py-12">
+      <section aria-label="Stranded XAI" className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-3)]">Departures, pre-IPO conversions</p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -123,9 +115,9 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
             {xaiClosedDays} days ago (about {xaiShortK}).
           </p>
         </div>
-        <aside aria-label="Next departure" className="h-fit rounded-md border border-[var(--line)] bg-[var(--panel)] p-4 sm:p-5">
+        <aside aria-label="Next departure" className="card h-fit p-4 sm:p-6">
           <p className="text-sm text-[var(--text-3)]">Next departure</p>
-          <p className="mt-1 text-lg font-bold text-[var(--text)]">SPACEX</p>
+          <p className="mt-1 text-xl font-bold text-[var(--text)]">SPACEX</p>
           <div className="mt-3">
             <CountdownFlap deadline={spacex.deadline as string} size="sm" />
           </div>
@@ -141,14 +133,14 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
         </aside>
       </section>
 
-      <section aria-label="Timelines" className="mt-10 grid gap-6">
-        <div className="min-w-0 rounded-md border border-[var(--line)] bg-[var(--panel)] p-4 sm:p-5">
+      <section aria-label="Timelines" className="mt-12 grid gap-6">
+        <div className="card min-w-0 p-4 sm:p-6">
           <p className="num text-sm text-[var(--text-2)]">XAI to SPACEX</p>
           <div className="mt-1 overflow-x-auto">
             <Timeline variant="xai" nowMs={nowMs} />
           </div>
         </div>
-        <div className="min-w-0 rounded-md border border-[var(--line)] bg-[var(--panel)] p-4 sm:p-5">
+        <div className="card min-w-0 p-4 sm:p-6">
           <p className="num text-sm text-[var(--text-2)]">SPACEX to public stock</p>
           <div className="mt-1 overflow-x-auto">
             <Timeline variant="spacex" nowMs={nowMs} />
@@ -156,8 +148,8 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
         </div>
       </section>
 
-      <section aria-label="Board" className="mt-10">
-        <h2 className="num text-lg font-bold text-[var(--text)]">Board</h2>
+      <section aria-label="Board" className="mt-12">
+        <h2 className="num text-xl font-bold text-[var(--text)]">Board</h2>
         <div className="num mt-4 hidden grid-cols-[1fr_1fr_1.5fr_1fr_1fr_1fr] gap-4 border-b border-[var(--line)] pb-2 text-xs text-[var(--text-3)] sm:grid">
           <span>Token</span>
           <span>Converts into</span>
@@ -173,7 +165,7 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
             return (
               <div
                 key={token.mint}
-                className="grid grid-cols-2 gap-x-4 gap-y-3 rounded-md border border-[var(--line)] bg-[var(--panel)] p-4 sm:grid-cols-[1fr_1fr_1.5fr_1fr_1fr_1fr] sm:items-center sm:rounded-none sm:border-0 sm:border-b sm:bg-transparent sm:p-0 sm:py-3"
+                className="card grid grid-cols-2 gap-x-4 gap-y-3 p-4 sm:grid-cols-[1fr_1fr_1.5fr_1fr_1fr_1fr] sm:items-center sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:py-3 sm:shadow-none sm:border-b"
               >
                 <div className="min-w-0">
                   <p className="text-xs text-[var(--text-3)] sm:hidden">Token</p>
@@ -221,7 +213,7 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
           {awaiting.map((token) => (
             <span
               key={token.mint}
-              className="num rounded-md border border-[var(--line)] bg-[var(--panel)] px-2.5 py-1 text-xs"
+              className="num chip"
               style={{ color: "var(--awaiting)" }}
             >
               {token.symbol} {token.holderCount.toLocaleString("en-US")} holders
@@ -230,8 +222,8 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
         </div>
       </section>
 
-      <section aria-label="Unconverted XAI wallets" className="mt-10">
-        <h2 className="num text-lg font-bold text-[var(--text)]">Unconverted XAI wallets</h2>
+      <section aria-label="Unconverted XAI wallets" className="mt-12">
+        <h2 className="num text-xl font-bold text-[var(--text)]">Unconverted XAI wallets</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-2)]">
           Most of these wallets can still convert; they just have not. Wallets tagged no SOL for fees cannot pay the network fee, so LAST CALL can sponsor it.
         </p>
@@ -244,7 +236,7 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
               return (
                 <div
                   key={holder.address}
-                  className="rounded-md border border-[var(--line)] bg-[var(--panel)] p-4"
+                  className="card p-4"
                 >
                   <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
                     <span className="min-w-0 text-sm text-[var(--text)]">
@@ -280,7 +272,7 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
         )}
       </section>
 
-      <footer className="mt-10 border-t border-[var(--line)] pt-3">
+      <footer className="mt-12 border-t border-[var(--line)] pt-3">
         <p className="num text-xs text-[var(--text-3)]">
           Read from Solana mainnet and Jupiter at {ledger.generatedAt} UTC.
         </p>
