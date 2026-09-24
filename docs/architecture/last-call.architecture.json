@@ -1,0 +1,519 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "LAST CALL architecture",
+    "output": "last-call-architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1350,
+      660
+    ],
+    "views": [
+      {
+        "id": "detection",
+        "label": "Corporate-action detection",
+        "focus": [
+          "web",
+          "holdings",
+          "events",
+          "core",
+          "ledger"
+        ],
+        "note": "holdings and events both decode Token-2022 config through core; events also renders the dated ones as a calendar."
+      },
+      {
+        "id": "conversion",
+        "label": "Conversion + sponsor",
+        "focus": [
+          "web",
+          "convert",
+          "sponsor",
+          "exec",
+          "rpc",
+          "jupswap"
+        ],
+        "note": "convert builds the transaction; sponsor independently re-checks it before cosigning fee-only."
+      },
+      {
+        "id": "sources",
+        "label": "External data sources",
+        "focus": [
+          "core",
+          "exec",
+          "ledger",
+          "events",
+          "pyth",
+          "rpc",
+          "jupswap",
+          "jupprice",
+          "jupholders",
+          "jupsearch",
+          "gecko",
+          "prestocks",
+          "hermes"
+        ],
+        "note": "Every package reads a named live source; nothing here is mocked or hardcoded."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "apps/web",
+      "sublabel": "Next.js: / /ledger /inbox /proof + /api/*",
+      "pos": [
+        525,
+        60
+      ],
+      "size": [
+        300,
+        80
+      ]
+    },
+    {
+      "id": "sponsor",
+      "type": "security",
+      "label": "packages/sponsor",
+      "tag": "@lastcall/sponsor",
+      "sublabel": "cosign() allowlist gate",
+      "pos": [
+        27,
+        230
+      ],
+      "size": [
+        180,
+        74
+      ]
+    },
+    {
+      "id": "convert",
+      "type": "backend",
+      "label": "packages/convert",
+      "tag": "@lastcall/convert",
+      "sublabel": "sponsored conversion tx",
+      "pos": [
+        223,
+        230
+      ],
+      "size": [
+        180,
+        74
+      ]
+    },
+    {
+      "id": "ledger",
+      "type": "backend",
+      "label": "packages/ledger",
+      "tag": "@lastcall/ledger",
+      "sublabel": "lifecycle.json + buildLedger()",
+      "pos": [
+        419,
+        230
+      ],
+      "size": [
+        180,
+        74
+      ]
+    },
+    {
+      "id": "holdings",
+      "type": "backend",
+      "label": "packages/holdings",
+      "tag": "@lastcall/holdings",
+      "sublabel": "getHoldings(owner)",
+      "pos": [
+        615,
+        230
+      ],
+      "size": [
+        180,
+        74
+      ]
+    },
+    {
+      "id": "events",
+      "type": "backend",
+      "label": "packages/events",
+      "tag": "@lastcall/events",
+      "sublabel": "corporate-action events",
+      "pos": [
+        811,
+        230
+      ],
+      "size": [
+        180,
+        74
+      ]
+    },
+    {
+      "id": "slice",
+      "type": "backend",
+      "label": "packages/slice",
+      "tag": "not wired into apps/web",
+      "sublabel": "impact-bounded slicing",
+      "pos": [
+        1007,
+        230
+      ],
+      "size": [
+        150,
+        74
+      ]
+    },
+    {
+      "id": "pyth",
+      "type": "backend",
+      "label": "packages/pyth",
+      "tag": "requires PYTH_API_KEY",
+      "sublabel": "compares vs Hermes",
+      "pos": [
+        1173,
+        230
+      ],
+      "size": [
+        150,
+        74
+      ]
+    },
+    {
+      "id": "exec",
+      "type": "backend",
+      "label": "packages/exec",
+      "tag": "@fineprint/exec",
+      "sublabel": "build/execute swaps",
+      "pos": [
+        223,
+        410
+      ],
+      "size": [
+        180,
+        74
+      ]
+    },
+    {
+      "id": "core",
+      "type": "backend",
+      "label": "packages/core",
+      "tag": "@fineprint/core",
+      "sublabel": "Token-2022 decode",
+      "pos": [
+        615,
+        410
+      ],
+      "size": [
+        180,
+        74
+      ]
+    },
+    {
+      "id": "jupswap",
+      "type": "external",
+      "label": "Jupiter Swap API",
+      "sublabel": "quote / swap",
+      "pos": [
+        27,
+        570
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "rpc",
+      "type": "external",
+      "label": "Solana mainnet RPC",
+      "sublabel": "mint + wallet reads",
+      "pos": [
+        193,
+        570
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "jupprice",
+      "type": "external",
+      "label": "Jupiter Price API v3",
+      "sublabel": "USD marks",
+      "pos": [
+        359,
+        570
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "jupholders",
+      "type": "external",
+      "label": "Jupiter holders",
+      "sublabel": "holder + SOL balance",
+      "pos": [
+        525,
+        570
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "prestocks",
+      "type": "external",
+      "label": "PreStocks API",
+      "sublabel": "live symbol + mint list",
+      "pos": [
+        691,
+        570
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "jupsearch",
+      "type": "external",
+      "label": "Jupiter token search",
+      "sublabel": "xStock / Ondo discovery",
+      "pos": [
+        857,
+        570
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "hermes",
+      "type": "external",
+      "label": "Pyth Hermes",
+      "sublabel": "keyed live price feed",
+      "pos": [
+        1023,
+        570
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "gecko",
+      "type": "external",
+      "label": "GeckoTerminal OHLCV",
+      "tag": "/api/gap-history",
+      "sublabel": "daily pool closes",
+      "pos": [
+        1189,
+        570
+      ],
+      "size": [
+        130,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "packages/* (pnpm workspace)",
+      "wraps": [
+        "sponsor",
+        "convert",
+        "ledger",
+        "holdings",
+        "events",
+        "slice",
+        "pyth",
+        "exec",
+        "core"
+      ],
+      "pad": 24
+    },
+    {
+      "kind": "region",
+      "label": "external data sources",
+      "wraps": [
+        "jupswap",
+        "rpc",
+        "jupprice",
+        "jupholders",
+        "prestocks",
+        "jupsearch",
+        "hermes",
+        "gecko"
+      ],
+      "pad": 18
+    },
+    {
+      "kind": "security-group",
+      "label": "holder signs, sponsor cosigns fee-only",
+      "wraps": [
+        "sponsor",
+        "convert"
+      ],
+      "pad": 12
+    }
+  ],
+  "connections": [
+    {
+      "id": "web-sponsor",
+      "from": "web",
+      "to": "sponsor",
+      "label": "cosign()",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "web-convert",
+      "from": "web",
+      "to": "convert",
+      "label": "buildSponsoredConversion()",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "web-ledger",
+      "from": "web",
+      "to": "ledger",
+      "label": "buildLedger()",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": -18
+    },
+    {
+      "id": "web-holdings",
+      "from": "web",
+      "to": "holdings",
+      "label": "getHoldings(owner)",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        800,
+        318
+      ]
+    },
+    {
+      "id": "web-events",
+      "from": "web",
+      "to": "events",
+      "label": "eventsForWallet/Mints",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "convert-exec",
+      "from": "convert",
+      "to": "exec",
+      "label": "getQuote()",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 60
+    },
+    {
+      "id": "holdings-core",
+      "from": "holdings",
+      "to": "core",
+      "label": "decodeMint()",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "convert-jupswap",
+      "from": "convert",
+      "to": "jupswap",
+      "label": "swap-instructions",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "exec-rpc",
+      "from": "exec",
+      "to": "rpc",
+      "label": "mint + wallet reads",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "ledger-jupprice",
+      "from": "ledger",
+      "to": "jupprice",
+      "label": "USD marks",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "ledger-jupholders",
+      "from": "ledger",
+      "to": "jupholders",
+      "label": "holder rows",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "core-prestocks",
+      "from": "core",
+      "to": "prestocks",
+      "label": "token list",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "events-jupsearch",
+      "from": "events",
+      "to": "jupsearch",
+      "label": "xStock/Ondo discovery",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "pyth-hermes",
+      "from": "pyth",
+      "to": "hermes",
+      "label": "keyed",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Detection",
+      "items": [
+        "holdings and events both decode live Token-2022 config through core",
+        "both also read packages/ledger's lifecycle.json for deadline and conversion-target data",
+        "events builds the watched universe from PreStocks plus a filtered Jupiter search, then toIcs() renders the dated events as a calendar with 30/7/1-day reminders"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Trust boundary",
+      "items": [
+        "sponsor re-derives every instruction before signing: fixed program allowlist, exactly one Jupiter instruction, no System program instruction",
+        "sponsor may sign only as fee payer or ATA-rent funder, never as a token-owner signer",
+        "packages/sponsor/check.mjs proves 3 attack variants are refused"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Verification",
+      "items": [
+        "every money-path package ships a check.mjs that recomputes its result against mainnet",
+        "pnpm proof runs 5 of them as real subprocesses into apps/web/public/proof.json",
+        "/proof shows each check's command, pass/fail and timestamp"
+      ]
+    }
+  ]
+}

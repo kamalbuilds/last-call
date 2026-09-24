@@ -86,6 +86,12 @@ Optional `.env` in `apps/web`: `SOLANA_RPC_URL`, `SPONSOR_SECRET_KEY` (base58) f
 
 Design tokens and rules live in `DESIGN.md`.
 
+## Architecture
+
+The component map, data sources, the three core flows (detection, conversion, Blink) and the sponsor's trust boundary are in [`ARCHITECTURE.md`](ARCHITECTURE.md), with a diagram at [`docs/architecture/last-call-architecture.html`](docs/architecture/last-call-architecture.html) (interactive) and below (static).
+
+![LAST CALL architecture](docs/architecture/last-call-architecture.png)
+
 ## Built on
 
 Jupiter Swap API for routing, Token-2022 transfer-fee and scaled-UI-amount decoding carried over from an earlier project of ours, Next.js with Wallet Standard, and public Solana RPC.
