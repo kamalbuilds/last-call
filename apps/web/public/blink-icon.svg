@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Last call departure board">
+  <rect width="512" height="512" rx="64" fill="#0A0D14"/>
+  <rect x="56" y="56" width="400" height="400" rx="6" fill="#111623" stroke="#222A3B" stroke-width="4"/>
+  <rect x="56" y="150" width="400" height="4" fill="#222A3B"/>
+  <text x="88" y="122" font-family="monospace" font-size="36" letter-spacing="8" fill="#6B7385">LAST CALL</text>
+  <text x="88" y="250" font-family="monospace" font-size="72" font-weight="bold" fill="#ECEEF2">XAI</text>
+  <text x="250" y="250" font-family="monospace" font-size="72" fill="#6B7385">-&gt;</text>
+  <text x="88" y="340" font-family="monospace" font-size="56" font-weight="bold" fill="#ECEEF2">SPACEX</text>
+  <rect x="56" y="384" width="400" height="72" fill="#FF5A4E"/>
+  <text x="88" y="432" font-family="monospace" font-size="36" font-weight="bold" letter-spacing="4" fill="#0A0D14">CONVERT</text>
+</svg>
