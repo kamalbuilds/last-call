@@ -5,8 +5,10 @@ import path from "node:path";
 import { Connection } from "@solana/web3.js";
 import { decodeMint, readEpochPosition, type MintFacts } from "@fineprint/core";
 import { DeckNav } from "@/components/deck-nav";
+import { Clipping, PostCard, Screenshot } from "@/components/evidence";
 import { SolscanLink } from "@/components/solscan-link";
 import { SplitFlap } from "@/components/split-flap";
+import { POSTS } from "@/lib/evidence-posts";
 import { getLedger, shorten, type LedgerToken } from "@/lib/ledger";
 import { readTerms, termsRpcUrl } from "@/lib/terms";
 
@@ -29,7 +31,7 @@ const FEE_TIER_MINTS: [string, string][] = [
   ["OPENAI", "PreweJYECqtQwBtpxHL171nL2K6umo692gTm7Q3rpgF"],
   ["POLYMARKET", "Pre8AREmFPtoJFT8mQSXQLh56cwJmM7CFDRuoGBZiUP"],
 ];
-const SLIDES = 10;
+const SLIDES = 11;
 
 interface ProofCheck {
   name: string;
@@ -148,15 +150,27 @@ export default async function PitchPage(): Promise<React.ReactNode> {
       </Slide>
 
       <Slide n={2} label="The problem" title="When the conversion window closes, the token is dead weight.">
-        <blockquote className="max-w-3xl border-l border-[var(--line)] pl-4 text-xl leading-relaxed text-[var(--text)] sm:text-[28px]">
-          After the window, PreStocks tokens &ldquo;expire worthless and will no longer be supported.&rdquo;
-        </blockquote>
-        <p className="mt-3 text-sm text-[var(--text-3)]">
-          <a href="https://x.com/PreStocks/status/2063623768535363940" target="_blank" rel="noreferrer" className="underline">
-            PreStocks on X, 2026-06-07
-          </a>
+        <p className="max-w-3xl text-base leading-relaxed text-[var(--text-2)]">
+          The issuer says it in its own words, on its own site and its own account.
         </p>
-        <div className="mt-8 max-w-3xl">
+        <div className="mt-8 grid min-w-0 grid-cols-1 items-start gap-8 lg:grid-cols-12">
+          <PostCard post={POSTS["2063623768535363940"]!} exhibit="A" tilt={-1} className="lg:col-span-5" />
+          <div className="grid min-w-0 gap-8 lg:col-span-7">
+            <Screenshot
+              exhibit="B"
+              kind="PreStocks product page"
+              src="/evidence/prestocks-xai.webp"
+              width={880}
+              height={650}
+              alt="prestocks.com/xai: a banner reads xAI was acquired by SpaceX. Each XAI token must be swapped into 0.7165 SPACEX before 11:59pm UTC on 12 September 2026, or it will expire worthless. Holders 1.47K."
+              source="https://prestocks.com/xai"
+              note="Read 13 days after the deadline: the banner still stands, with 1.47K holders listed."
+              tilt={1}
+            />
+            <PostCard post={POSTS["2085670140730052698"]!} exhibit="C" className="lg:ml-12" />
+          </div>
+        </div>
+        <div className="mt-12 max-w-3xl">
           <Row label="First deadline: xAI" value="2026-09-12 23:59 UTC" />
           <Row label="Conversion rate" value="0.7165 SPACEX per XAI" note="0.1433 before SpaceX's 5-for-1 split" />
           <Row
@@ -167,7 +181,76 @@ export default async function PitchPage(): Promise<React.ReactNode> {
         </div>
       </Slide>
 
-      <Slide n={3} label="Measured" title="The gate closed with holders still at it.">
+      <Slide n={3} label="The paper trail" title="The merger was front-page news. The deadline was one line in a post.">
+        <p className="max-w-3xl text-base leading-relaxed text-[var(--text-2)]">
+          Every exhibit is dated and linked to the original. Screenshots were taken on 2026-09-25.
+        </p>
+        <div className="mt-8 grid min-w-0 grid-cols-1 items-start gap-8 lg:grid-cols-3">
+          <div className="grid min-w-0 gap-8">
+            <Screenshot
+              exhibit="D"
+              kind="Reuters via Yahoo Finance"
+              src="/evidence/reuters-0-1433.webp"
+              width={600}
+              height={540}
+              alt="Reuters, February 2 2026: Investors in Elon Musk's xAI will receive 0.1433 shares of SpaceX for every share of xAI."
+              source="https://finance.yahoo.com/news/exclusive-spacex-xai-set-share-022819786.html"
+              note="2026-02-02, reporting by Echo Wang: the 0.1433 exchange ratio."
+            />
+            <Screenshot
+              exhibit="F"
+              kind="CNBC"
+              src="/evidence/cnbc-xai-spacex-merger.webp"
+              width={650}
+              height={580}
+              alt="CNBC, February 3 2026, Samantha Subin: Musk's xAI, SpaceX combo is the biggest merger of all time, valued at $1.25 trillion."
+              source="https://www.cnbc.com/2026/02/03/musk-xai-spacex-biggest-merger-ever.html"
+              note="2026-02-03, Samantha Subin: the $1.25 trillion merger."
+              tilt={-1}
+            />
+            <Clipping
+              exhibit="J"
+              outlet="egpivo.dev"
+              author="Wen-Ting Wang"
+              date="2026-08-30"
+              title="Markets Are Full of Roads. That Doesn't Mean Capital Takes Them."
+              href="https://egpivo.dev/2026/08/30/markets-are-full-of-roads.html"
+              quote="A quote to buy into the expiring wrapper was always available; a quote to get out at size usually was not."
+            />
+          </div>
+          <div className="grid min-w-0 gap-8 lg:mt-16">
+            <PostCard post={POSTS["2018489472648929742"]!} exhibit="E" tilt={1} />
+            <PostCard post={POSTS["2022040614662238404"]!} exhibit="G" />
+            <Clipping
+              exhibit="I"
+              outlet="BeInCrypto"
+              author="Shilpa Lama"
+              date="2026-06-17"
+              title="SPCX vs. SPCXx vs. SPACEX: Why SpaceX Tokens Trade at Different Prices"
+              href="https://beincrypto.com/learn/spcx-vs-spcxx-vs-spacex/"
+              quote="PreStocks states that SPACEX tokens must be swapped by 11:59 p.m. UTC on March 12, 2027, or they expire worthless. The swap is not automatic."
+              tilt={1}
+            />
+          </div>
+          <div className="grid min-w-0 gap-8 lg:mt-6">
+            <PostCard post={POSTS["2066264670114304144"]!} exhibit="H" tilt={-1} />
+            <Clipping
+              exhibit="K"
+              outlet="RWA Sonar"
+              author="Issuer programme dossier"
+              date="read 2026-09-25"
+              title="PreStocks: what the token holder owns"
+              href="https://www.rwasonar.com/issuers/prestocks.html"
+              quote="holders have 9 months post-IPO (3 months after lockup) to convert, after which &quot;the tokens will expire worthless and will no longer be supported&quot;."
+              tilt={-1}
+            />
+          </div>
+        </div>
+      </Slide>
+
+      <Slide n={4} label="Measured" title="The gate closed with holders still at it.">
+        <div className="grid min-w-0 grid-cols-1 items-start gap-8 lg:grid-cols-12">
+        <div className="min-w-0 lg:col-span-6">
         {xai === undefined ? (
           <ReadFailed what="the XAI ledger" err={ledgerR.status === "rejected" ? message(ledgerR.reason) : "XAI missing from ledger"} />
         ) : (
@@ -192,14 +275,42 @@ export default async function PitchPage(): Promise<React.ReactNode> {
             <p className="num mt-4 text-sm text-[var(--text-3)]">Ledger generated {utc(Date.parse(ledger!.generatedAt))}.</p>
           </div>
         )}
+        </div>
+        <div className="grid min-w-0 gap-8 lg:col-span-6">
+          <Screenshot
+            exhibit="L"
+            kind="Solscan, XAI mint"
+            src="/evidence/solscan-xai-token.webp"
+            width={812}
+            height={470}
+            alt="Solscan token page for xAI PreStocks: current supply 2,078.52, holders 1,470, authority Squad Vault PreStocks Issuer, Token 2022 program."
+            source="https://solscan.io/token/PreC1KtJ1sBPPqaeeqL6Qb15GTLCYVvyYEwxhdfTwfx"
+            note="Supply 2,078.52 and 1,470 holders, 13 days past the deadline."
+            tilt={1}
+          />
+          <Screenshot
+            exhibit="M"
+            kind="Solscan, a stranded holder"
+            src="/evidence/solscan-stranded-wallet.webp"
+            width={812}
+            height={390}
+            alt="Solscan account CtB2LNTpRnD97zTcDqMnTih7usipMxrD5WYsdiC9V3Jb: SOL balance 0, account does not exist onchain, 10 tokens worth $48,488.97."
+            source="https://solscan.io/account/CtB2LNTpRnD97zTcDqMnTih7usipMxrD5WYsdiC9V3Jb"
+            note="0 SOL and $48,488.97 in tokens. It still holds 139.018 XAI: getTokenAccountsByOwner and getBalance at slot 450,280,197."
+            className="lg:ml-12"
+          />
+        </div>
+        </div>
       </Slide>
 
-      <Slide n={4} label="Why not just swap" title="A 0-SOL wallet cannot pay the fee, and the gasless swap has no quote.">
+      <Slide n={5} label="Why not just swap" title="A 0-SOL wallet cannot pay the fee, and the gasless swap has no quote.">
         <p className="max-w-3xl text-base leading-relaxed text-[var(--text-2)]">
           We asked Jupiter Ultra, the gasless swap Phantom and Jupiter offer, for real orders on 2026-09-24, from a
           wallet with 0 SOL and at every size we tried.
         </p>
-        <div className="mt-6 max-w-3xl">
+        <div className="mt-6 grid min-w-0 grid-cols-1 items-start gap-8 lg:grid-cols-12">
+        <div className="min-w-0 lg:col-span-7">
+        <div className="max-w-3xl">
           <Row label="XAI to SPACEX via Jupiter Ultra" value={<span className="text-[var(--closed)]">Failed to get quotes</span>} />
           <Row label="SPACEX to SPCXx via Jupiter Ultra" value={<span className="text-[var(--closed)]">Failed to get quotes</span>} />
           <Row label="Same routes via Jupiter Swap API, used by LAST CALL" value="routes" note="XAI to SPACEX at 1.30% impact for 10, 30 and 139 XAI" />
@@ -212,9 +323,35 @@ export default async function PitchPage(): Promise<React.ReactNode> {
           Most unconverted value sits in wallets that could pay a fee and have not converted. The sponsor serves the
           minority that cannot; the board and wallet lookup serve everyone else.
         </p>
+        </div>
+        <div className="grid min-w-0 gap-8 lg:col-span-5">
+          <Screenshot
+            exhibit="N"
+            kind="Jupiter Ultra API"
+            src="/evidence/jupiter-ultra-no-quote.webp"
+            width={840}
+            height={140}
+            alt="Jupiter Ultra order response: error Failed to get quotes."
+            source="https://lite-api.jup.ag/ultra/v1/order?inputMint=PreC1KtJ1sBPPqaeeqL6Qb15GTLCYVvyYEwxhdfTwfx&outputMint=PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh&amount=10000000000&taker=CtB2LNTpRnD97zTcDqMnTih7usipMxrD5WYsdiC9V3Jb"
+            note="10 XAI to SPACEX with the 0-SOL wallet from exhibit M as taker. The same order with no taker returns a route."
+            tilt={-1}
+          />
+          <Screenshot
+            exhibit="O"
+            kind="Jupiter swap page"
+            src="/evidence/jupiter-swap-page.webp"
+            width={516}
+            height={460}
+            alt="jup.ag swap page with XAI as the sell token and SPACEX as the buy token; XAI shows 2 warnings and SPACEX 1 warning."
+            source="https://jup.ag/swap?sell=PreC1KtJ1sBPPqaeeqL6Qb15GTLCYVvyYEwxhdfTwfx&buy=PreANxuXjsy2pvisWWMNB6YaJNzr7681wJJr2rHsfTh"
+            note="The pair is listed on Jupiter. XAI carries 2 warnings, SPACEX 1."
+            className="lg:ml-8"
+          />
+        </div>
+        </div>
       </Slide>
 
-      <Slide n={5} label="What LAST CALL does" title="See the deadline, check the wallet, convert in one signature.">
+      <Slide n={6} label="What LAST CALL does" title="See the deadline, check the wallet, convert in one signature.">
         <ol className="max-w-3xl">
           {[
             ["Board", "/ledger", "One row per PreStocks token: conversion target, deadline, status, unconverted amount, and the largest unconverted wallets with 0-SOL wallets flagged."],
@@ -237,7 +374,7 @@ export default async function PitchPage(): Promise<React.ReactNode> {
         </ol>
       </Slide>
 
-      <Slide n={6} label="Epoch 1043" title="Seven mints already carry a higher fee, scheduled by epoch.">
+      <Slide n={7} label="Epoch 1043" title="Seven mints already carry a higher fee, scheduled by epoch.">
         <p className="max-w-3xl text-base leading-relaxed text-[var(--text-2)]">
           Each mint&apos;s Token-2022 transferFeeConfig holds a second tier with an activation epoch. The token program
           applies it automatically. It is announced nowhere public.
@@ -297,7 +434,7 @@ export default async function PitchPage(): Promise<React.ReactNode> {
         </div>
       </Slide>
 
-      <Slide n={7} label="Sponsor safety" title="The sponsor pays the fee and can do nothing else.">
+      <Slide n={8} label="Sponsor safety" title="The sponsor pays the fee and can do nothing else.">
         <div className="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-[3fr_2fr]">
           <div className="min-w-0">
             <p className="text-base text-[var(--text-2)]">packages/sponsor co-signs only when every check holds:</p>
@@ -324,7 +461,7 @@ export default async function PitchPage(): Promise<React.ReactNode> {
         </div>
       </Slide>
 
-      <Slide n={8} label="Proof" title="A real mainnet buy, and checks that run against mainnet.">
+      <Slide n={9} label="Proof" title="A real mainnet buy, and checks that run against mainnet.">
         <div className="max-w-3xl">
           <Row
             label="Test buy of PreStocks tokens with real SOL, via Meteora DLMM"
@@ -356,7 +493,7 @@ export default async function PitchPage(): Promise<React.ReactNode> {
         )}
       </Slide>
 
-      <Slide n={9} label="Not yet verified" title="What we have not shown yet.">
+      <Slide n={10} label="Not yet verified" title="What we have not shown yet.">
         <ul className="max-w-3xl">
           {[
             "A conversion sent and finalized on mainnet through this app. Every conversion so far is a simulation against a real 0-SOL wallet. The test buy left the wallet too close to its rent-exempt floor to fund a new token account, which is the case the sponsor exists for.",
@@ -369,7 +506,9 @@ export default async function PitchPage(): Promise<React.ReactNode> {
         </ul>
       </Slide>
 
-      <Slide n={10} label="Next cohort" title="SpaceX's own deadline is next, for over ten thousand holders.">
+      <Slide n={11} label="Next cohort" title="SpaceX's own deadline is next, for over ten thousand holders.">
+        <div className="grid min-w-0 grid-cols-1 items-start gap-8 lg:grid-cols-12">
+        <div className="min-w-0 lg:col-span-6">
         {spacex === undefined ? (
           <ReadFailed what="the SPACEX ledger row" err={ledgerR.status === "rejected" ? message(ledgerR.reason) : "SPACEX missing from ledger"} />
         ) : (
@@ -387,6 +526,20 @@ export default async function PitchPage(): Promise<React.ReactNode> {
         <p className="mt-4 text-base text-[var(--text-2)]">
           <a href="https://lastcall-sol.vercel.app" className="underline">lastcall-sol.vercel.app</a>
         </p>
+        </div>
+        <Screenshot
+          exhibit="P"
+          kind="Kamino, xStocks market"
+          src="/evidence/kamino-xstocks.webp"
+          width={940}
+          height={700}
+          alt="Kamino Borrow page, xStocks Market: market size $28.85M; MSTRx, SPYx, GOOGLx, QQQx, TSLAx, NVDAx, CRCLx and HOODx listed as supply assets."
+          source="https://kamino.com/borrow?market=5wJeMrUYECGq41fxRESKALVcHnNX26TAWy4W98yULsua"
+          note="Where a converted holder lands: Kamino already lends against xStocks, a $28.85M market. SPCXx is not a reserve there yet (Kamino reserves API, 2026-09-25)."
+          tilt={1}
+          className="lg:col-span-6"
+        />
+        </div>
       </Slide>
 
       <DeckNav count={SLIDES} />
