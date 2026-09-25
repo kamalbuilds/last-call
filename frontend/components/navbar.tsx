@@ -14,6 +14,7 @@ const LINKS = [
   { href: "/analytics", label: "Analytics" },
   { href: "/proof", label: "Proof" },
   { href: "/pitch", label: "Pitch" },
+  { href: "/docs", label: "Docs" },
 ];
 
 function short(address: string): string {

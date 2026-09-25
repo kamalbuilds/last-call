@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack --port 3000",
-    "build": "next build --webpack",
+    "build": "node sync-docs.mjs && next build --webpack",
     "start": "next start --port 3000",
     "typecheck": "tsc --noEmit"
   },
@@ -24,6 +24,7 @@
     "@wallet-standard/base": "1.1.1",
     "bs58": "^4.0.1",
     "geist": "^1.7.2",
+    "marked": "^18.0.14",
     "next": "16.3.5",
     "react": "19.3.0",
     "react-dom": "19.3.0"
