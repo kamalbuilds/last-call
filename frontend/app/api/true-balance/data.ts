@@ -111,7 +111,7 @@ async function readScaledFacts(conn: Connection, mint: string, asOfUnix: number)
       timestamp,
       asOfUnix,
     ),
-    lastChangeIso: new Date(timestamp * 1000).toISOString(),
+    lastChangeIso: timestamp > 0 ? new Date(timestamp * 1000).toISOString() : null,
   };
 }
 
