@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Countdown } from "@/components/countdown";
 import { CountdownFlap } from "@/components/countdown-flap";
+import { ConversionsLedger } from "@/components/conversions-ledger";
 import { GapHistory, GapHistoryFallback } from "@/components/gap-history";
 import { SolscanLink } from "@/components/solscan-link";
 import { SplitFlap } from "@/components/split-flap";
@@ -41,6 +42,15 @@ function intoSymbol(token: LedgerToken): string {
 
 function dollars(value: number): string {
   return `$${Math.round(value).toLocaleString("en-US")}`;
+}
+
+function StatTile({ value, label }: { value: string; label: string }): React.ReactNode {
+  return (
+    <div className="min-w-0 border-t border-[var(--line)] pt-3 sm:border-t-0 sm:border-l sm:pl-6 sm:pt-0 first:border-t-0 sm:first:border-l-0 sm:first:pl-0">
+      <p className="num text-2xl font-bold leading-none text-[var(--text)]">{value}</p>
+      <p className="mt-2 text-sm leading-snug text-[var(--text-2)]">{label}</p>
+    </div>
+  );
 }
 
 export default async function LedgerPage(): Promise<React.ReactNode> {
@@ -94,46 +104,58 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
   const xaiUsd = xai.unconvertedUsd ?? 0;
   const xaiShortK = `$${Math.round(xaiUsd / 1000)}k`;
   const xaiClosedDays = xai.deadline !== null ? daysSince(xai.deadline, nowMs) : 0;
-  const topXai = (xai.holders ?? []).slice().sort((a, b) => b.amount - a.amount).slice(0, 20);
+  const allXaiHolders = xai.holders ?? [];
+  const topXai = allXaiHolders.slice().sort((a, b) => b.amount - a.amount).slice(0, 20);
+  const needSponsorCount = allXaiHolders.filter((h) => h.solBalance < 0.001).length;
 
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 sm:py-12">
-      <section aria-label="Stranded XAI" className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="min-w-0">
-          <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-3)]">Departures, pre-IPO conversions</p>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <SplitFlap value="XAI" size="md" />
-            <span className="chip" style={{ color: "var(--closed)", borderColor: "var(--closed)" }}>
-              GATE CLOSED
-            </span>
-          </div>
-          <div className="mt-4 min-w-0">
-            <SplitFlap value={dollars(xaiUsd)} size="lg" />
-          </div>
-          <p className="num mt-3 max-w-xl text-sm leading-relaxed text-[var(--text-2)]">
-            {dollars(xaiUsd)} stranded in {xai.holderCount.toLocaleString("en-US")} wallets. Gate closed{" "}
-            {xaiClosedDays} days ago (about {xaiShortK}).
-          </p>
+      <section aria-label="Stranded XAI" className="border-b border-[var(--line)] pb-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-3)]">Departures, pre-IPO conversions</p>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <SplitFlap value="XAI" size="md" />
+          <span className="chip" style={{ color: "var(--closed)", borderColor: "var(--closed)" }}>
+            GATE CLOSED
+          </span>
         </div>
+        <div className="mt-4 min-w-0">
+          <SplitFlap value={dollars(xaiUsd)} size="lg" />
+        </div>
+        <p className="num mt-3 max-w-xl text-sm leading-relaxed text-[var(--text-2)]">
+          {dollars(xaiUsd)} stranded in {xai.holderCount.toLocaleString("en-US")} wallets. Gate closed{" "}
+          {xaiClosedDays} days ago (about {xaiShortK}).
+        </p>
+        <div className="num mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          <StatTile value={xai.holderCount.toLocaleString("en-US")} label="wallets holding unconverted XAI" />
+          <StatTile value={needSponsorCount.toLocaleString("en-US")} label="need a fee sponsor, no SOL for fees" />
+          <StatTile value={`${xaiClosedDays}d`} label="since the gate closed" />
+        </div>
+      </section>
+
+      <section aria-label="Conversion signal" className="mt-12 grid gap-6 lg:grid-cols-[1fr_320px]">
+        <Suspense fallback={<GapHistoryFallback />}>
+          <GapHistory />
+        </Suspense>
         <aside aria-label="Next departure" className="card h-fit p-4 sm:p-6">
           <p className="text-sm text-[var(--text-3)]">Next departure</p>
           <p className="mt-1 text-xl font-bold text-[var(--text)]">SPACEX</p>
           <div className="mt-3">
             <CountdownFlap deadline={spacex.deadline as string} size="sm" />
           </div>
-          <p className="num mt-3 text-sm text-[var(--text-2)]">
-            {spacex.holderCount.toLocaleString("en-US")} holders
-          </p>
-          <p className="num mt-1 text-sm text-[var(--text-3)]">
-            Deadline {(spacex.deadline as string).slice(0, 10)}
-          </p>
-          <Suspense fallback={<GapHistoryFallback />}>
-            <GapHistory />
-          </Suspense>
+          <dl className="num mt-4 flex flex-col gap-2 border-t border-[var(--line)] pt-4 text-sm">
+            <div className="flex items-center justify-between gap-2">
+              <dt className="text-[var(--text-3)]">Holders</dt>
+              <dd className="text-[var(--text)]">{spacex.holderCount.toLocaleString("en-US")}</dd>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <dt className="text-[var(--text-3)]">Deadline</dt>
+              <dd className="text-[var(--text)]">{(spacex.deadline as string).slice(0, 10)}</dd>
+            </div>
+          </dl>
         </aside>
       </section>
 
-      <section aria-label="Timelines" className="mt-12 grid gap-6">
+      <section aria-label="Timelines" className="mt-12 grid gap-6 lg:grid-cols-2">
         <div className="card min-w-0 p-4 sm:p-6">
           <p className="num text-sm text-[var(--text-2)]">XAI to SPACEX</p>
           <div className="mt-1 overflow-x-auto">
@@ -222,6 +244,8 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
         </div>
       </section>
 
+      <ConversionsLedger />
+
       <section aria-label="Unconverted XAI wallets" className="mt-12">
         <h2 className="num text-xl font-bold text-[var(--text)]">Unconverted XAI wallets</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-2)]">
@@ -230,13 +254,13 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
         {topXai.length === 0 ? (
           <p className="mt-3 text-sm text-[var(--text-2)]">No unconverted wallets found right now.</p>
         ) : (
-          <div className="mt-4 flex flex-col gap-3">
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {topXai.map((holder) => {
               const needsSponsor = holder.solBalance < 0.001;
               return (
                 <div
                   key={holder.address}
-                  className="card p-4"
+                  className="card min-w-0 p-4"
                 >
                   <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
                     <span className="min-w-0 text-sm text-[var(--text)]">
@@ -251,7 +275,7 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
                       Look up
                     </Link>
                   </div>
-                  <dl className="num mt-2 flex flex-wrap gap-x-8 gap-y-1 text-sm">
+                  <dl className="num mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm">
                     <div className="flex gap-2">
                       <dt className="text-[var(--text-3)]">XAI</dt>
                       <dd className="text-[var(--text)]">{holder.amount.toLocaleString("en-US", { maximumFractionDigits: 2 })}</dd>

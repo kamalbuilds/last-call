@@ -12,29 +12,29 @@ importers:
         specifier: ^4.23.15
         version: 4.23.15
 
-  apps/web:
+  frontend:
     dependencies:
       '@fineprint/core':
         specifier: workspace:*
-        version: link:../../packages/core
+        version: link:../packages/core
       '@fineprint/exec':
         specifier: workspace:*
-        version: link:../../packages/exec
+        version: link:../packages/exec
       '@lastcall/convert':
         specifier: workspace:*
-        version: link:../../packages/convert
+        version: link:../packages/convert
       '@lastcall/events':
         specifier: workspace:*
-        version: link:../../packages/events
+        version: link:../packages/events
       '@lastcall/holdings':
         specifier: workspace:*
-        version: link:../../packages/holdings
+        version: link:../packages/holdings
       '@lastcall/ledger':
         specifier: workspace:*
-        version: link:../../packages/ledger
+        version: link:../packages/ledger
       '@lastcall/sponsor':
         specifier: workspace:*
-        version: link:../../packages/sponsor
+        version: link:../packages/sponsor
       '@phosphor-icons/react':
         specifier: ^2.1.10
         version: 2.1.10(react-dom@19.3.0(react@19.3.0))(react@19.3.0)

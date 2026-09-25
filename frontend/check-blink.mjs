@@ -1,6 +1,6 @@
 import { withApp } from "./serve.mjs";
 import { createRequire } from "node:module";
-const require = createRequire(new URL("../../packages/exec/package.json", import.meta.url));
+const require = createRequire(new URL("../packages/exec/package.json", import.meta.url));
 const { VersionedTransaction } = require("@solana/web3.js");
 const HOLDER = "7b1HZeYmCch1caRxMN546FC6cN4PE5SE6fLBvhnVXHZz"; // real SPACEX holder with 0 SOL
 await withApp("@lastcall/web", 3154, async (get) => {

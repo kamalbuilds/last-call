@@ -60,8 +60,8 @@ for (const { name, command } of CHECKS) {
 }
 
 const proof = { generatedAt: new Date().toISOString(), checks };
-mkdirSync(path.join(root, "apps", "web", "public"), { recursive: true });
+mkdirSync(path.join(root, "frontend", "public"), { recursive: true });
 writeFileSync(
-  path.join(root, "apps", "web", "public", "proof.json"),
+  path.join(root, "frontend", "public", "proof.json"),
   JSON.stringify(proof, null, 2) + "\n",
 );

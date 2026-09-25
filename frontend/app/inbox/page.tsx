@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { InboxList } from "@/components/inbox-list";
+import { TrueBalancePanel } from "@/components/true-balance-panel";
 import { getUniverseFeed, getWalletEvents } from "@/components/inbox-data";
 import { shorten } from "@/lib/ledger";
 
@@ -132,6 +133,8 @@ export default async function InboxPage({ searchParams }: PageProps): Promise<Re
       <Suspense fallback={<p className="num mt-8 text-sm text-[var(--text-2)]">Reading on-chain events...</p>}>
         {hasWallet ? <WalletInbox wallet={wallet} /> : <UniverseFeed />}
       </Suspense>
+
+      {hasWallet && <TrueBalancePanel wallet={wallet} />}
     </main>
   );
 }

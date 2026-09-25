@@ -127,7 +127,7 @@ export function InboxList({ events, wallet }: { events: LastCallEvent[]; wallet:
     return <p className="mt-4 text-sm text-[var(--text-2)]">No corporate-action events right now. Try again in a minute.</p>;
   }
   return (
-    <div className="mt-4 flex flex-col gap-3">
+    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
       {events.map((event) => (
         <EventCard key={`${event.mint}-${event.type}`} event={event} wallet={wallet} />
       ))}

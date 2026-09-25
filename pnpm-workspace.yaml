@@ -1,6 +1,7 @@
 packages:
   - "packages/*"
   - "apps/*"
+  - "frontend"
 allowBuilds:
   # esbuild must run its postinstall or the binary is never linked and vitest/next fail.
   esbuild: true

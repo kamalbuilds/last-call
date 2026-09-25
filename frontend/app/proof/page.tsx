@@ -62,7 +62,7 @@ export default function ProofPage(): React.ReactNode {
           <p className="text-sm text-[var(--text-2)]">No checks recorded yet. Rerun the proof script to fill this board.</p>
         </section>
       ) : (
-        <section aria-label="Checks" className="mt-8 flex min-w-0 flex-col gap-3">
+        <section aria-label="Checks" className="mt-8 grid min-w-0 grid-cols-1 gap-3 lg:grid-cols-2">
           {proof.checks.map((check) => (
             <ProofCheckRow key={check.name} check={check} />
           ))}
@@ -74,7 +74,7 @@ export default function ProofPage(): React.ReactNode {
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-2)]">
           The mints and the holder these checks read. Open any address to verify it on Solscan.
         </p>
-        <div className="mt-4 flex min-w-0 flex-col gap-3">
+        <div className="mt-4 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3">
           <ProofAccountRow label="XAI mint" address={XAI_MINT} />
           <ProofAccountRow label="SPACEX mint" address={SPACEX_MINT} />
           <ProofAccountRow label="Holder" address={HOLDER} />

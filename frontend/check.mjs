@@ -8,7 +8,7 @@ try {
   let html;
   for (let i = 0; i < 40; i++) { try { html = await (await fetch("http://127.0.0.1:3107/ledger")).text(); break; } catch { await new Promise((r) => setTimeout(r, 1000)); } }
   if (!html) throw new Error("server never answered /ledger");
-  const L = JSON.parse(readFileSync(new URL("../../packages/ledger/out/ledger.json", import.meta.url)));
+  const L = await (await fetch("http://127.0.0.1:3107/api/ledger")).json();
   const xai = L.tokens.find((t) => t.symbol === "XAI");
   const shown = Math.round(xai.unconvertedInWallets).toLocaleString("en-US");
   for (const needle of ["XAI", "SPACEX", shown]) if (!html.includes(needle)) throw new Error(`/ledger missing "${needle}"`);

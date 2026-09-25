@@ -17,7 +17,7 @@ function layout(
   markers: Marker[],
   nowMs: number,
 ): { x: (ms: number) => number; nowX: number } {
-  const W = 1200;
+  const W = 520;
   const PAD = 8;
   const start = Date.parse(startIso);
   const end = Date.parse(endIso);
@@ -30,7 +30,7 @@ function layout(
 
 /** Horizontal flight timeline drawn as SVG. */
 export function Timeline({ variant, nowMs }: { variant: "xai" | "spacex"; nowMs: number }): React.ReactNode {
-  const W = 1200;
+  const W = 520;
   const Y = 44;
   if (variant === "spacex") {
     const start = "2026-06-12T00:00:00Z";
@@ -46,28 +46,34 @@ export function Timeline({ variant, nowMs }: { variant: "xai" | "spacex"; nowMs:
       { at: Date.parse("2027-03-12T23:59:00Z"), label: "Deadline 2027-03-12", color: "text" },
     ];
     return (
-      <svg viewBox={`0 0 ${W} 110`} className="block h-auto w-full min-w-[560px]" role="img" aria-label="SPACEX timeline from IPO to Deadline">
+      <svg viewBox={`0 0 ${W} 110`} className="block h-auto w-full sm:min-w-[520px]" role="img" aria-label="SPACEX timeline from IPO to Deadline">
         <line x1={x0} y1={Y} x2={Math.max(nowX, x0)} y2={Y} stroke="var(--text-2)" strokeWidth={2} />
         <line x1={Math.max(nowX, x0)} y1={Y} x2={x1} y2={Y} stroke="var(--line)" strokeWidth={2} />
-        {stops.map((s, i) => (
-          <g key={s.label}>
-            <line x1={x(s.at)} y1={Y - 8} x2={x(s.at)} y2={Y + 8} stroke={COLORS[s.color]} strokeWidth={1.5} />
-            <text
-              x={Math.min(Math.max(x(s.at), 60), W - 90)}
-              y={i % 2 === 0 ? Y + 28 : Y + 44}
-              textAnchor="middle"
-              fontSize={12}
-              fill={COLORS[s.color]}
-              fontFamily="var(--font-geist-mono), monospace"
-            >
-              {s.label}
-            </text>
-          </g>
-        ))}
+        {stops.map((s, i) => {
+          const isFirst = i === 0;
+          const isLast = i === stops.length - 1;
+          const anchor = isFirst ? "start" : isLast ? "end" : "middle";
+          const textX = isFirst ? x(s.at) : isLast ? Math.min(x(s.at), W - 2) : Math.min(Math.max(x(s.at), 60), W - 60);
+          return (
+            <g key={s.label}>
+              <line x1={x(s.at)} y1={Y - 8} x2={x(s.at)} y2={Y + 8} stroke={COLORS[s.color]} strokeWidth={1.5} />
+              <text
+                x={textX}
+                y={i % 2 === 0 ? Y + 28 : Y + 44}
+                textAnchor={anchor}
+                fontSize={12}
+                fill={COLORS[s.color]}
+                fontFamily="var(--font-geist-mono), monospace"
+              >
+                {s.label}
+              </text>
+            </g>
+          );
+        })}
         <g>
           <line x1={nowX} y1={Y - 12} x2={nowX} y2={Y + 12} stroke="var(--text)" strokeWidth={1.5} />
           <circle cx={nowX} cy={Y} r={4} fill="var(--text)" />
-          <text x={Math.min(Math.max(nowX, 30), W - 30)} y={Y - 18} textAnchor="middle" fontSize={12} fill="var(--text)" fontFamily="var(--font-geist-mono), monospace">
+          <text x={Math.min(Math.max(nowX, 20), W - 20)} y={Y - 18} textAnchor="middle" fontSize={12} fill="var(--text)" fontFamily="var(--font-geist-mono), monospace">
             Today
           </text>
         </g>
@@ -80,7 +86,7 @@ export function Timeline({ variant, nowMs }: { variant: "xai" | "spacex"; nowMs:
   const x0 = x(Date.parse(start));
   const x1 = x(Date.parse(end));
   return (
-    <svg viewBox={`0 0 ${W} 110`} className="block h-auto w-full min-w-[560px]" role="img" aria-label="XAI timeline from Conversion opened to Deadline">
+    <svg viewBox={`0 0 ${W} 110`} className="block h-auto w-full sm:min-w-[520px]" role="img" aria-label="XAI timeline from Conversion opened to Deadline">
       <line x1={x0} y1={Y} x2={x1} y2={Y} stroke="var(--text-2)" strokeWidth={2} />
       <g>
         <line x1={x0} y1={Y - 8} x2={x0} y2={Y + 8} stroke="var(--text-3)" strokeWidth={1.5} />
@@ -97,7 +103,7 @@ export function Timeline({ variant, nowMs }: { variant: "xai" | "spacex"; nowMs:
       <g>
         <line x1={Math.min(nowX, x1)} y1={Y - 12} x2={Math.min(nowX, x1)} y2={Y + 12} stroke="var(--text)" strokeWidth={1.5} />
         <circle cx={Math.min(nowX, x1)} cy={Y} r={4} fill="var(--text)" />
-        <text x={Math.min(Math.max(Math.min(nowX, x1), 30), W - 30)} y={Y - 18} textAnchor="middle" fontSize={12} fill="var(--text)" fontFamily="var(--font-geist-mono), monospace">
+        <text x={Math.min(Math.max(Math.min(nowX, x1), 20), W - 20)} y={Y - 18} textAnchor="middle" fontSize={12} fill="var(--text)" fontFamily="var(--font-geist-mono), monospace">
           Today
         </text>
       </g>

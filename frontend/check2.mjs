@@ -2,11 +2,11 @@
 import { spawn, execSync } from "node:child_process";
 import { renameSync, existsSync } from "node:fs";
 import { createRequire } from "node:module";
-const require = createRequire(new URL("../../packages/exec/package.json", import.meta.url));
+const require = createRequire(new URL("../packages/exec/package.json", import.meta.url));
 const { Keypair, VersionedTransaction } = require("@solana/web3.js");
 const bs58 = require("bs58");
-const OUT = new URL("../../packages/ledger/out/ledger.json", import.meta.url);
-const HID = new URL("../../packages/ledger/out/ledger.hidden.json", import.meta.url);
+const OUT = new URL("../packages/ledger/out/ledger.json", import.meta.url);
+const HID = new URL("../packages/ledger/out/ledger.hidden.json", import.meta.url);
 const OWNER = "CtB2LNTpRnD97zTcDqMnTih7usipMxrD5WYsdiC9V3Jb";
 if (existsSync(OUT)) renameSync(OUT, HID);
 const sponsor = Keypair.generate();
