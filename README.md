@@ -4,6 +4,8 @@ Pre-IPO tokens on Solana have an expiry date that most holders never hear about.
 
 Live: https://lastcall-sol.vercel.app ([ledger](https://lastcall-sol.vercel.app/ledger), [a real stranded wallet](https://lastcall-sol.vercel.app/?wallet=CtB2LNTpRnD97zTcDqMnTih7usipMxrD5WYsdiC9V3Jb))
 
+Documentation for holders, integrators and auditors: [docs/README.md](docs/README.md).
+
 ## What changes at epoch 1043
 
 We read every PreStocks mint's Token-2022 `transferFeeConfig` straight off mainnet, `getAccountInfo` and `getParsedAccountInfo` on each mint through `packages/core`'s `decodeMint`, and checked it against `getEpochInfo`. Seven of the eight PreStocks tokens (ANDURIL, ANTHROPIC, FIGUREAI, KALSHI, NEURALINK, OPENAI, POLYMARKET) carry a second fee tier already written into the mint: it raises the transfer fee from 100bps (1%) to 300bps (3%) once the chain reaches epoch 1043. SPACEX has no pending tier; its fee holds at 100bps.
@@ -87,7 +89,7 @@ Each package has a `check.mjs` that verifies the result independently of the cod
 | `packages/slice/check.mjs` | Re-quotes a $10k-equivalent SPACEX conversion and the planned slice independently; the slice must sit under the threshold while the single swap sits above it. |
 | `apps/web/check.mjs` | Builds and serves the app; the board, holdings API and convert API answer with live data. |
 
-Not yet verified: a conversion sent and finalized on mainnet through this app (so far all conversions are simulations, see above), a saving from sliced conversions, and behaviour under Jupiter or RPC outages. The Pyth comparison in `packages/pyth` needs a `PYTH_API_KEY` and has not run against live Pyth prices. `/api/gap-history` is live (checked 2026-09-25, 200 OK, daily gap points since the SPACEX IPO). A real-conversions ledger at `/api/conversions` exists in this branch's code but is not yet on the deployed site: it returned a 404 when checked live on 2026-09-25, since the route has not been deployed yet.
+Not yet verified: a conversion sent and finalized on mainnet through this app (so far all conversions are simulations, see above), a saving from sliced conversions, and behaviour under Jupiter or RPC outages. The Pyth comparison in `packages/pyth` needs a `PYTH_API_KEY` and has not run against live Pyth prices. `/api/gap-history` is live (checked 2026-09-25, 200 OK, daily gap points since the SPACEX IPO). `/api/conversions` is live (checked 2026-09-25, 200 OK): it lists real XAI to SPACEX conversions read from mainnet, each with its signature, realized ratio and shortfall against the stated 0.7165 rate.
 
 ## Compared with other Stocklana entries
 
