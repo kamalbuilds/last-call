@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/ledger", label: "Board" },
   { href: "/inbox", label: "Inbox" },
   { href: "/proof", label: "Proof" },
+  { href: "/pitch", label: "Pitch" },
 ];
 
 function short(address: string): string {
