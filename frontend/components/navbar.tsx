@@ -9,6 +9,9 @@ const FALLBACK_BROWSE = "https://phantom.app/ul/browse/";
 const LINKS = [
   { href: "/ledger", label: "Board" },
   { href: "/inbox", label: "Inbox" },
+  { href: "/inbox#pyth", label: "Pyth" },
+  { href: "/compliance", label: "Compliance" },
+  { href: "/analytics", label: "Analytics" },
   { href: "/proof", label: "Proof" },
   { href: "/pitch", label: "Pitch" },
 ];
@@ -103,7 +106,7 @@ export function Navbar(): React.ReactNode {
           LAST CALL
         </Link>
 
-        <nav className="hidden flex-1 items-center gap-6 text-sm sm:flex">
+        <nav className="hidden flex-1 items-center gap-6 text-sm lg:flex">
           {LINKS.map((link) => (
             <Link key={link.href} href={link.href} className="text-[var(--text-2)] hover:text-[var(--text)]">
               {link.label}
@@ -111,13 +114,13 @@ export function Navbar(): React.ReactNode {
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2 sm:ml-0">
+        <div className="ml-auto flex items-center gap-2 lg:ml-0">
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
             aria-label="Toggle menu"
-            className="btn-ghost p-2 sm:hidden"
+            className="btn-ghost p-2 lg:hidden"
           >
             {menuOpen ? <X size={16} weight="bold" /> : <List size={16} weight="bold" />}
           </button>
@@ -126,7 +129,7 @@ export function Navbar(): React.ReactNode {
       </div>
 
       {menuOpen && (
-        <nav className="flex flex-col gap-1 border-t border-[var(--line)] px-4 py-3 sm:hidden">
+        <nav className="flex flex-col gap-1 border-t border-[var(--line)] px-4 py-3 lg:hidden">
           {LINKS.map((link) => (
             <Link
               key={link.href}

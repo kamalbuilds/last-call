@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { InboxList } from "@/components/inbox-list";
 import { TrueBalancePanel } from "@/components/true-balance-panel";
+import { PythPanel } from "@/components/pyth-panel";
 import { getUniverseFeed, getWalletEvents } from "@/components/inbox-data";
 import { shorten } from "@/lib/ledger";
 
@@ -135,6 +136,10 @@ export default async function InboxPage({ searchParams }: PageProps): Promise<Re
       </Suspense>
 
       {hasWallet && <TrueBalancePanel wallet={wallet} />}
+
+      <Suspense fallback={<p id="pyth" className="num mt-12 text-sm text-[var(--text-2)]">Reading Pyth prices...</p>}>
+        <PythPanel />
+      </Suspense>
     </main>
   );
 }

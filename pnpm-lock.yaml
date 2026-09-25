@@ -32,6 +32,9 @@ importers:
       '@lastcall/ledger':
         specifier: workspace:*
         version: link:../packages/ledger
+      '@lastcall/pyth':
+        specifier: workspace:*
+        version: link:../packages/pyth
       '@lastcall/sponsor':
         specifier: workspace:*
         version: link:../packages/sponsor

@@ -1,4 +1,12 @@
 import type { NextConfig } from "next";
+import { existsSync, readFileSync } from "node:fs";
+import { parseEnv } from "node:util";
+
+// Local runs read PYTH_API_KEY from the repo-root .env; hosted builds set it in their own env.
+if (process.env.PYTH_API_KEY === undefined && existsSync("../.env")) {
+  const key = parseEnv(readFileSync("../.env", "utf8")).PYTH_API_KEY;
+  if (key !== undefined) process.env.PYTH_API_KEY = key;
+}
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -12,6 +20,7 @@ const nextConfig: NextConfig = {
     "@lastcall/events",
     "@lastcall/holdings",
     "@lastcall/ledger",
+    "@lastcall/pyth",
     "@lastcall/sponsor",
   ],
   webpack(config) {
