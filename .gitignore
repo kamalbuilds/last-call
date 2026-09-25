@@ -10,4 +10,10 @@ test-ledger
 research/
 docs/*
 !docs/architecture/
+!docs/README.md
+!docs/users/
+!docs/integrators/
+!docs/methodology/
+!docs/trust/
+!docs/reference/
 packages/*/out/
