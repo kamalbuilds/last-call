@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@fineprint/core": "workspace:*",
     "@fineprint/exec": "workspace:*",
     "@lastcall/convert": "workspace:*",
     "@lastcall/events": "workspace:*",

@@ -4,6 +4,8 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import type { HoldingRow } from "@lastcall/holdings";
 import { Countdown } from "@/components/countdown";
 import { BlinkShareLink } from "@/components/blink-share-link";
+import { TermsPanel } from "@/components/terms-panel";
+import type { TermsJson } from "@/lib/terms";
 import { useWallet } from "@/lib/use-wallet";
 import {
   conversionTargetSymbol,
@@ -61,11 +63,13 @@ function ConvertCard({
   rows,
   owner,
   siteUrl,
+  terms,
 }: {
   row: HoldingRow;
   rows: HoldingRow[];
   owner: string;
   siteUrl: string;
+  terms: TermsJson | null;
 }): React.ReactNode {
   const { connected, signAndSend } = useWallet();
   const [converting, setConverting] = useState<boolean>(false);
@@ -82,6 +86,7 @@ function ConvertCard({
   const isOwner = hydrated && connected?.address === owner;
   const showConnectPrompt = hydrated && !isOwner;
   const muted = isDustWithoutQuote(row);
+  const pausedByIssuer = terms?.paused === true;
 
   const convert = useCallback(async (): Promise<void> => {
     if (!isOwner) {
@@ -160,18 +165,26 @@ function ConvertCard({
           The gate is closed. These tokens can still be redeemed through LAST CALL before the issuer removes them.
         </p>
       )}
+      <TermsPanel mint={row.mint} terms={terms} />
       <button
         type="button"
         onClick={() => void convert()}
-        disabled={converting}
+        disabled={converting || pausedByIssuer}
         className="btn-primary mt-4 w-full px-4 py-3 text-sm sm:w-auto sm:min-w-64 disabled:opacity-50"
       >
-        {converting
-          ? "Converting"
-          : showConnectPrompt
-            ? "Connect this wallet to convert"
-            : `Convert ${formatBalance(row.amount)} ${row.symbol} to ${target ?? "stock"}`}
+        {pausedByIssuer
+          ? "Convert paused by issuer"
+          : converting
+            ? "Converting"
+            : showConnectPrompt
+              ? "Connect this wallet to convert"
+              : `Convert ${formatBalance(row.amount)} ${row.symbol} to ${target ?? "stock"}`}
       </button>
+      {pausedByIssuer && (
+        <p className="mt-2 text-sm text-[var(--closed)]">
+          This token is paused by the issuer, so conversion is disabled until transfers resume.
+        </p>
+      )}
       {failure !== null && <p className="mt-3 text-sm text-[var(--closed)]">{failure}</p>}
       <p className="mt-2">
         <BlinkShareLink token={row.symbol} siteUrl={siteUrl} />
@@ -198,10 +211,12 @@ export function WalletLookup({
   owner,
   rows,
   siteUrl,
+  termsByMint,
 }: {
   owner: string;
   rows: HoldingRow[];
   siteUrl: string;
+  termsByMint?: Record<string, TermsJson | null>;
 }): React.ReactNode {
   const sorted = sortHoldings(rows);
   const actionable = sorted.filter((r) => r.convertsInto !== null);
@@ -214,7 +229,7 @@ export function WalletLookup({
   return (
     <div className="mt-4 flex flex-col gap-4">
       {actionable.map((row) => (
-        <ConvertCard key={row.mint} row={row} rows={rows} owner={owner} siteUrl={siteUrl} />
+        <ConvertCard key={row.mint} row={row} rows={rows} owner={owner} siteUrl={siteUrl} terms={termsByMint?.[row.mint] ?? null} />
       ))}
       {waiting.length > 0 && (
         <p className="num card p-4 text-sm leading-relaxed text-[var(--text-2)]">
