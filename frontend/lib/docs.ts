@@ -30,7 +30,8 @@ export function rewriteHref(href: string): string {
     const slug = slugOf(path);
     return `${docHref(slug)}${hash ? `#${hash}` : ""}`;
   }
-  if (path.endsWith(".html")) return `/${path.replace(/^(\.\.\/)+/, "")}`;
+  // The tracked HTML diagram carries em dashes and raw scroll listeners the UI gate rejects; the site ships its PNG render.
+  if (path.endsWith(".html")) return `/${path.replace(/^(\.\.\/)+/, "").replace(/\.html$/, ".png")}`;
   return href;
 }
 
