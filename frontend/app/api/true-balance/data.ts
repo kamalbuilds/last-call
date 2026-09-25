@@ -10,6 +10,8 @@ export interface TrueBalanceHolding {
   mint: string;
   /** raw on-chain amount / 10^decimals, before any multiplier. */
   raw: number;
+  /** exact on-chain amount in base units, as a decimal string. */
+  rawAmount: string;
   /** scaledUiAmountConfig multiplier in force right now: newMultiplier once its
    * effective timestamp has passed, otherwise multiplier. 1 when the mint has
    * no scaledUiAmountConfig extension. */
@@ -170,6 +172,7 @@ export async function getTrueBalances(owner: string): Promise<TrueBalanceHolding
       symbol,
       mint,
       raw,
+      rawAmount: held.raw.toString(),
       multiplier: facts.multiplier,
       trueBalance: raw * facts.multiplier,
       gainFromDividendsPct: (facts.multiplier - 1) * 100,

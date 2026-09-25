@@ -1,6 +1,5 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { Connection, PublicKey } from "@solana/web3.js";
 import type { HoldingRow } from "@lastcall/holdings";
 import { Countdown } from "@/components/countdown";
 import { BlinkShareLink } from "@/components/blink-share-link";
@@ -15,12 +14,8 @@ import {
   sortHoldings,
 } from "@/lib/holdings-view";
 
-const TOKEN_2022_PROGRAM_ID = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 const FINAL_CALL_MS = 30 * 86_400_000;
 
-function rpcUrl(): string {
-  return process.env.NEXT_PUBLIC_SOLANA_RPC_URL ?? "https://api.mainnet-beta.solana.com";
-}
 
 function chipStyle(status: HoldingRow["status"], deadline: string | null): { label: string; color: string } {
   if (status === "expired") return { label: "GATE CLOSED", color: "var(--closed)" };
@@ -32,26 +27,12 @@ function chipStyle(status: HoldingRow["status"], deadline: string | null): { lab
 }
 
 async function readRawBalance(owner: string, mint: string): Promise<bigint> {
-  const connection = new Connection(rpcUrl(), "confirmed");
-  const accounts = await connection.getParsedTokenAccountsByOwner(new PublicKey(owner), {
-    programId: new PublicKey(TOKEN_2022_PROGRAM_ID),
-  });
-  let total = 0n;
-  for (const entry of accounts.value) {
-    const parsed = entry.account.data as unknown as {
-      parsed?: { info?: { mint?: unknown; tokenAmount?: { amount?: unknown } } };
-    };
-    const info = parsed.parsed?.info;
-    if (info?.mint !== mint) continue;
-    const amount = info.tokenAmount?.amount;
-    if (typeof amount !== "string") continue;
-    try {
-      total += BigInt(amount);
-    } catch {
-      continue;
-    }
-  }
-  return total;
+  // Read through our own API: public mainnet RPC rejects browser-origin requests with 403.
+  const res = await fetch(`/api/true-balance?owner=${owner}`, { cache: "no-store" });
+  const body = (await res.json()) as { holdings?: { mint: string; rawAmount: string }[]; error?: string };
+  if (!res.ok || !body.holdings) throw new Error(body.error ?? "balance read failed");
+  const held = body.holdings.find((h) => h.mint === mint);
+  return held ? BigInt(held.rawAmount) : 0n;
 }
 
 function errorMessage(err: unknown): string {
