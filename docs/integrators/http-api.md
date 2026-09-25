@@ -11,7 +11,7 @@ Errors are JSON `{ "error": string }` unless stated. The Actions routes use `{ "
 File: `frontend/app/actions.json/route.ts`. Also answers `OPTIONS` with 204.
 
 ```json
-{"rules":[{"pathPattern":"/convert/**","apiPath":"/api/actions/convert/**"},{"pathPattern":"/api/actions/**","apiPath":"/api/actions/**"}]}
+{"rules":[{"pathPattern":"/api/actions/**","apiPath":"/api/actions/**"}]}
 ```
 
 Headers: `Access-Control-Allow-Origin: *`, `X-Action-Version: 1`, `X-Blockchain-Ids: solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`. See [Blinks](blinks.md).

@@ -14,14 +14,13 @@ X-Blockchain-Ids: solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp
 
 ## actions.json
 
-`GET /actions.json` returns two rules:
+`GET /actions.json` returns one rule:
 
 | pathPattern | apiPath |
 |---|---|
-| `/convert/**` | `/api/actions/convert/**` |
 | `/api/actions/**` | `/api/actions/**` |
 
-Only the second rule points at a handler that exists. There is no `/convert` page, and no handler below `/api/actions/convert/`: on 2026-09-25 both `/convert` and `/api/actions/convert/x?token=XAI` returned 404 on the live site. Point clients at `/api/actions/convert?token=...` directly.
+Point clients at `/api/actions/convert?token=...`.
 
 ## GET: metadata
 
@@ -70,4 +69,4 @@ The site builds share links in this form (`frontend/components/blink-share-link.
 https://dial.to/?action=solana-action:https://lastcall-sol.vercel.app/api/actions/convert?token=XAI
 ```
 
-The home page renders a preview of the same action by calling the GET endpoint on its own host (`frontend/components/home-convert-blink.tsx`). If it cannot work out its host, it falls back to `https://last-call-fawn.vercel.app`, a different domain from the one in `README.md`.
+The home page renders a preview of the same action by calling the GET endpoint on its own host (`frontend/components/home-convert-blink.tsx`). If it cannot work out its host, it falls back to `https://lastcall-sol.vercel.app`, the domain in `README.md`.

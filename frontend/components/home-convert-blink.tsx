@@ -19,7 +19,7 @@ export async function HomeConvertBlink(): Promise<React.ReactNode> {
   const heads = await headers();
   const host = heads.get("x-forwarded-host") ?? heads.get("host") ?? "";
   const proto = heads.get("x-forwarded-proto") ?? (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
-  const siteUrl = host === "" ? "https://last-call-fawn.vercel.app" : `${proto}://${host}`;
+  const siteUrl = host === "" ? "https://lastcall-sol.vercel.app" : `${proto}://${host}`;
   const blinkUrl = `https://dial.to/?action=solana-action:${siteUrl}/api/actions/convert?token=XAI`;
 
   let action: ActionResponse | null = null;

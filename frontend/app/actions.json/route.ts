@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 
 const BODY = {
   rules: [
-    { pathPattern: "/convert/**", apiPath: "/api/actions/convert/**" },
     { pathPattern: "/api/actions/**", apiPath: "/api/actions/**" },
   ],
 };
