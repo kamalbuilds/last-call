@@ -34,7 +34,9 @@ export function TermsPanel({
           <dd className="num min-w-0 text-right text-[var(--text)]">
             {terms.transferFeeBps} bps
             <span className="ml-2 text-xs text-[var(--text-2)]">
-              {terms.feeInForce ? "in force" : "scheduled, not yet in force"}
+              {terms.pendingBps === null
+                ? "in force"
+                : `in force, ${terms.pendingBps} bps from epoch ${terms.pendingActivationEpoch}`}
             </span>
           </dd>
         </div>

@@ -10,7 +10,9 @@ export function termsRpcUrl(): string {
 export interface TermsJson {
   mint: string;
   transferFeeBps: number;
-  feeInForce: boolean;
+  /** A scheduled tier that has not activated yet; null when none is pending. */
+  pendingBps: number | null;
+  pendingActivationEpoch: number | null;
   permanentDelegate: string | null;
   paused: boolean;
   multiplier: number;
@@ -39,17 +41,15 @@ export async function readTerms(mint: string): Promise<TermsJson> {
     decodeMint(mint, mint, connection),
     connection.getParsedAccountInfo(key, "confirmed"),
   ]);
-  const newerEpoch = facts.transferFee.current.epoch;
-  const currentEpoch =
-    facts.transferFee.currentEpoch ?? (await connection.getEpochInfo()).epoch;
   return {
     mint,
     transferFeeBps: facts.transferFee.currentBps,
-    feeInForce: currentEpoch >= newerEpoch,
+    pendingBps: facts.transferFee.pendingBps ?? null,
+    pendingActivationEpoch: facts.transferFee.pendingActivationEpoch ?? null,
     permanentDelegate: facts.powers.permanentDelegate,
     paused: facts.powers.paused,
     multiplier: facts.scaledUiAmount?.operativeMultiplier ?? 1,
-    freezeAuthority: freezeAuthorityFromParsed(parsed.value?.data),
+    freezeAuthority: freezeAuthorityFromParsed(parsed.value),
     readAtSlot: facts.slot,
   };
 }

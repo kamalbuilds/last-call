@@ -110,11 +110,12 @@ File: `frontend/app/api/terms/route.ts`, calls `readTerms()` in `frontend/lib/te
 200:
 
 ```ts
-{ mint: string; transferFeeBps: number; feeInForce: boolean; permanentDelegate: string | null;
+{ mint: string; transferFeeBps: number; pendingBps: number | null;
+  pendingActivationEpoch: number | null; permanentDelegate: string | null;
   paused: boolean; multiplier: number; freezeAuthority: string | null; readAtSlot: number }
 ```
 
-`transferFeeBps` is the in-force rate. `feeInForce` is `currentEpoch >= newer tier epoch`, so it is `false` while a newer tier is still pending even though `transferFeeBps` is already the rate charged; see [Token terms panel](../users/token-terms-panel.md). Mints without a `transferFeeConfig` extension fail in `decodeMint` and return 502.
+`transferFeeBps` is the in-force rate. `pendingBps` and `pendingActivationEpoch` describe a newer tier the mint has scheduled but the chain has not reached yet; both are null when none is pending. `freezeAuthority` is the base mint field from jsonParsed. See [Token terms panel](../users/token-terms-panel.md). Mints without a `transferFeeConfig` extension fail in `decodeMint` and return 502.
 
 400: invalid `mint`. 502: decode or RPC failure.
 

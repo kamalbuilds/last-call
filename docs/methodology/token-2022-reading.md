@@ -97,7 +97,7 @@ From `decodeMint`, returned as `MintFacts.powers`:
 | `defaultAccountState` | `defaultAccountState` | `frozen` would mean new accounts start frozen |
 | `singleKeyControlsAll` | derived | one key holds every one of the above |
 
-Freeze authority is a base mint field, not an extension. `readTerms()` tries to read it from jsonParsed `freezeAuthority`, but its helper `freezeAuthorityFromParsed()` in `frontend/lib/terms.ts` is handed the account `data` and then reads `.data` from it again, so it always returns null. All nine PreStocks mints had freeze authority `WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc` at slot 450272212.
+Freeze authority is a base mint field, not an extension. `readTerms()` reads it from the jsonParsed account (`freezeAuthorityFromParsed()` in `frontend/lib/terms.ts`), and `frontend/check-terms.mjs` asserts the live value. All nine PreStocks mints had freeze authority `WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc` at slot 450272212.
 
 In the 2026-09-25 XAI read, one address, `WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc`, held the permanent delegate, pause, transfer fee, withdraw-withheld, transfer hook and scaled-UI authorities, with no transfer hook program set.
 
