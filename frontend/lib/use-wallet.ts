@@ -124,11 +124,42 @@ function toDetected(wallet: Wallet): DetectedWallet {
   };
 }
 
+// One connection per page. Every component that calls useWallet() (navbar, convert cards) must see the
+// same session; per-hook state left the convert card disconnected after connecting in the navbar.
+interface Session {
+  wallet: Wallet | null;
+  account: WalletAccount | null;
+  connected: { name: string; address: string } | null;
+}
+let session: Session = { wallet: null, account: null, connected: null };
+const listeners = new Set<(s: Session) => void>();
+function publish(next: Session): void {
+  session = next;
+  listeners.forEach((l) => l(next));
+}
+
 export function useWallet(): WalletState {
   const [detected, setDetected] = useState<DetectedWallet[]>([]);
-  const [connected, setConnected] = useState<{ name: string; address: string } | null>(null);
-  const [activeWallet, setActiveWallet] = useState<Wallet | null>(null);
-  const [activeAccount, setActiveAccount] = useState<WalletAccount | null>(null);
+  const [connected, setConnectedState] = useState<{ name: string; address: string } | null>(session.connected);
+  const [activeWallet, setActiveWalletState] = useState<Wallet | null>(session.wallet);
+  const [activeAccount, setActiveAccountState] = useState<WalletAccount | null>(session.account);
+
+  useEffect((): (() => void) => {
+    const onSession = (s: Session): void => {
+      setActiveWalletState(s.wallet);
+      setActiveAccountState(s.account);
+      setConnectedState(s.connected);
+    };
+    listeners.add(onSession);
+    onSession(session);
+    return (): void => {
+      listeners.delete(onSession);
+    };
+  }, []);
+
+  const setActiveWallet = (w: Wallet | null): void => publish({ ...session, wallet: w });
+  const setActiveAccount = (a: WalletAccount | null): void => publish({ ...session, account: a });
+  const setConnected = (c: { name: string; address: string } | null): void => publish({ ...session, connected: c });
   const [connecting, setConnecting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
