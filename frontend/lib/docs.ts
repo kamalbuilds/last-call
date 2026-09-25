@@ -76,7 +76,7 @@ function render(src: string): { title: string; html: string; headings: DocHeadin
         return `<div class="docs-table"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>\n`;
       },
       code({ text, lang }) {
-        const label = lang ? `<span class="docs-code-lang">${escape(lang)}</span>` : "";
+        const label = lang ? `<div class="docs-code-lang">${escape(lang)}</div>` : "";
         return `<div class="docs-code">${label}<pre><code>${escape(text)}</code></pre></div>\n`;
       },
       link({ href, title: t, tokens }) {

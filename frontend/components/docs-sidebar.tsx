@@ -22,7 +22,7 @@ function List({ groups, active }: { groups: Numbered[]; active: string }): React
   );
   return (
     <nav aria-label="Documentation" className="flex flex-col gap-6">
-      <div>{item("/docs", "00", "Overview")}</div>
+      <div className="border-l border-transparent pl-2">{item("/docs", "00", "Overview")}</div>
       {groups.map((g) => (
         <div key={g.name}>
           <p className="px-2 pb-2 text-xs font-semibold text-[var(--text-3)]">{g.name}</p>
