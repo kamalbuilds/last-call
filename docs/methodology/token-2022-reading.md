@@ -8,7 +8,7 @@ LAST CALL reads three things from each mint that change what a holder gets: the 
 |---|---|---|
 | `decodeMint()`, `packages/core/src/decode.ts` | `/api/terms`, the terms panel, `packages/holdings` | `getParsedAccountInfo` (jsonParsed) plus `getAccountInfo` (raw bytes). Requires a Token-2022 owner and a `transferFeeConfig` extension, otherwise throws |
 | `batchDecodeMints()`, `packages/events/src/index.ts` | `/inbox`, `/api/inbox.ics` | `getMultipleAccountsInfo` in chunks of 100, unpacked with `@solana/spl-token` (`getTransferFeeConfig`, `getScaledUiAmountConfig`, `getPausableConfig`). Missing extensions are skipped, not errors |
-| `readScaledFacts()`, `frontend/app/api/true-balance/data.ts`, and `getOutputUiParams()`, `packages/holdings/src/index.ts` | true balance, quote output amounts | jsonParsed, `scaledUiAmountConfig` only. Exists because some xStocks have no transfer fee and `decodeMint` would throw on them |
+| `readScaledFacts()`, `frontend/app/api/true-balance/data.ts`, and `getOutputUiParams()`, `packages/holdings/src/index.ts` | true balance, quote output amounts | jsonParsed, `scaledUiAmountConfig` only. Covers xStocks that carry no transfer fee extension |
 
 All three feed the same selection functions from `packages/core`, so the in-force rule is the same everywhere.
 
@@ -33,7 +33,7 @@ otherwise                    -> older
 | `currentBps` | the in-force rate. Use this one |
 | `roundTripBps` | `currentBps * 2` |
 | `uncapped` | in-force `maximumFee` equals u64 max |
-| `pendingBps`, `pendingActivationEpoch` | the scheduled tier if not yet active |
+| `pendingBps`, `pendingActivationEpoch` | the scheduled tier until its epoch arrives |
 | `slotsUntilActivation`, `secondsUntilActivation` | countdown to that epoch; seconds at the 0.4 s target slot time, so an estimate |
 
 `packages/exec/src/fee.ts` applies the same rule on the execution side, with `transferFeeOf()` rounding the fee up and capping it at `maximumFee`.
@@ -47,7 +47,9 @@ Read from `https://api.mainnet-beta.solana.com` on 2026-09-25: `getEpochInfo` re
 | older | 1039 | 100 bps |
 | newer | 1043 | 0 bps |
 
-So XAI charges 100 bps now, with 0 bps scheduled from epoch 1043.
+So XAI charged 100 bps then, with 0 bps scheduled from epoch 1043.
+
+Re-read on 2026-10-01 through `/api/terms` at epoch 1046 (`getEpochInfo` slot 452193419): XAI 0 bps in force, the seven 100-to-300 bps mints at 300 bps in force with nothing pending, SPACEX 100 bps. The schedule decoded on 2026-09-25 is the schedule that executed.
 
 All nine PreStocks mints, read with `getMultipleAccounts` (jsonParsed) at slot 450272212 the same day:
 

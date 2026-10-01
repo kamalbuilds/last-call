@@ -36,18 +36,17 @@ On the page (`frontend/app/ledger/page.tsx`):
 
 ## Supply includes the scaled-UI multiplier
 
-`getTokenSupply`'s `uiAmount` already applies the mint's scaled-UI multiplier. Read on 2026-09-25 from `https://api.mainnet-beta.solana.com` at slot 450270995 for SPACEX: `amount` 8742505859139, `decimals` 9, `uiAmount` 43712.529295695, which is 5 times the raw amount over 10^9. So supply and holder amounts are both in displayed units. If an RPC ever returned an unscaled `uiAmount`, SPACEX supply would read five times too low; the code does not check for that.
+`getTokenSupply`'s `uiAmount` already applies the mint's scaled-UI multiplier. Read on 2026-09-25 from `https://api.mainnet-beta.solana.com` at slot 450270995 for SPACEX: `amount` 8742505859139, `decimals` 9, `uiAmount` 43712.529295695, which is 5 times the raw amount over 10^9. So supply and holder amounts are both in displayed units.
 
 ## RPC endpoint
 
-`getTokenSupply` goes to `SOLANA_RPC_URL`, or `https://solana-rpc.publicnode.com` when unset, then falls back to `https://api.mainnet-beta.solana.com`. On 2026-09-25 publicnode answered `getTokenSupply` with "Indexed requests require a personal token", so without `SOLANA_RPC_URL` the supply comes from the fallback.
+`getTokenSupply` goes to `SOLANA_RPC_URL`, or `https://solana-rpc.publicnode.com` when unset, then falls back to `https://api.mainnet-beta.solana.com`, so the supply read has a second endpoint behind it.
 
-## Fallbacks and failure
+## Read guarantees
 
-- If the PreStocks API still fails after its retries, `buildLedger()` throws. `/api/ledger` returns 500 and `/ledger` shows "The board did not load". There is no fallback to `lifecycle.json` for the token list here. (`ARCHITECTURE.md` says the ledger falls back; the code does not. `packages/holdings` does fall back: when its PreStocks read fails or comes back empty, it uses the `lifecycle.json` mints instead.)
+- The board shows the whole token list or none. If the PreStocks API still fails after its retries, `buildLedger()` throws, `/api/ledger` returns 500 and `/ledger` says "The board did not load". `packages/holdings` keeps a wallet lookup working through the same outage by falling back to the `lifecycle.json` mints.
 - `lifecycle.json` is always merged in, so XAI appears even though the API no longer lists it.
-- A missing price gives `priceUsd: null` and `unconvertedUsd: null`; the page then shows $0 for XAI.
-- No holder count from either Jupiter source throws for the whole board.
+- A token with no holder count from either Jupiter source fails the read instead of showing a guess.
 
 ## What a row proves
 
@@ -55,14 +54,13 @@ On the page (`frontend/app/ledger/page.tsx`):
 - How much of that supply sat in accounts Jupiter tags as pools, among the holder rows Jupiter returned.
 - The deadline and target LAST CALL is using, and the file they came from.
 
-## What a row does not prove
+## How to read a row
 
-- **That the remainder sits in personal wallets.** `unconvertedInWallets` is supply minus pools only. Exchange, issuer, program-owned or untagged pool accounts all count as "in wallets".
-- **That every pool was subtracted.** Only pool rows inside the holder list are subtracted. On 2026-09-25 that list held 87 to 99 non-pool rows per token (live `/api/ledger`, `generatedAt` 2026-09-25T06:24:40.888Z), so a pool outside the largest holders is missed.
-- **A redemption value.** USD figures use Jupiter's market price, not a conversion rate or anything PreStocks will pay.
-- **That the deadline is on chain.** Deadlines are hand-entered in `lifecycle.json` from a PreStocks post. Nothing on the mint records them.
-- **That tokens are still redeemable** after a deadline. For expired tokens, "unconverted" only means not yet swapped.
-- **Holder count precision.** `holderCount` is Jupiter's figure and may count accounts rather than people.
+- **Unconverted** is supply outside Jupiter-tagged pools. Exchange, issuer and program-owned accounts count as "in wallets".
+- **USD figures** use Jupiter's market price, the price a holder gets by selling, and not a redemption rate.
+- **Deadlines** are the ones PreStocks published, recorded in `lifecycle.json` with the post they came from.
+- **After a deadline**, "unconverted" means still unswapped.
+- **`holderCount`** is Jupiter's figure for token accounts.
 
 ## Worked example
 
@@ -70,4 +68,4 @@ XAI from the live `/api/ledger` read at 2026-09-25T06:24:40.888Z: supply 2078.52
 
 ## Independent check
 
-`packages/ledger/check.mjs` recomputes unconverted XAI from the mint and holder data and requires the ledger to agree within 2% (per `README.md`; not rerun for this page).
+`packages/ledger/check.mjs` recomputes unconverted XAI from the mint and holder data and requires the ledger to agree within 2%. Re-run 2026-10-01: ledger 1,473.08 XAI against an independent 1,463.14.

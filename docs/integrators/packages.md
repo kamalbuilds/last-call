@@ -1,8 +1,8 @@
 # Packages
 
-The app in `frontend/` depends on seven workspace packages (`frontend/package.json`). Each exports its TypeScript source directly (`"main": "./src/index.ts"`); there is no build step and nothing is published to npm. The lists below are the public exports as of this commit.
+The app in `frontend/` depends on eight workspace packages (`frontend/package.json`). Each exports its TypeScript source directly (`"main": "./src/index.ts"`), so a workspace consumer imports it with no build step.
 
-## Wired into the app
+## Used by the app
 
 ### @fineprint/core (`packages/core`)
 
@@ -19,11 +19,11 @@ Token-2022 reading shared by the rest. Exported from `packages/core/src/index.ts
 | `naiveVsCorrect(facts)` | `naive.ts` | Supply with and without the multiplier |
 | types `MintFacts`, `TransferFeeTier`, `ScaledUiAmount`, `IssuerPowers`, and others | `types.ts` | Shared shapes |
 
-`types.ts` also exports `CostVerdict`, `TradFiQuote`, `OnChainQuote` and `Venue`, used only by the unwired `packages/cost`.
+`types.ts` also exports `CostVerdict`, `TradFiQuote`, `OnChainQuote` and `Venue`, used by `packages/cost`.
 
 ### @fineprint/exec (`packages/exec`)
 
-Jupiter swap building and execution. The app imports `getQuote` and `getSwapTransaction` (`frontend/app/api/actions/convert/convert.ts`) and `packages/convert` imports `getQuote` and `JupiterApiError`. Modules re-exported from `packages/exec/src/index.ts`: `connection`, `fee` (`transferFeeOf`, `netAfterTransferFee`, `grossForNet`, `inForceTier`, `roundTripBps`), `mint` (`readExecMintFacts`, `execFactsFromMintFacts`), `jupiter` (`getQuote`, `getSwapTransaction`, `routeLabel`, `QUOTE_URL`, `SWAP_URL`), `build` (`buildUnsignedSwap`, `destinationAtaFor`, `readAtaState`), `execute` (`executeSwap`, `confirmFinalized`, `evaluatePostCondition`), `web` (`buildSwap`, `confirmSwap`, `readFinalizedSwapEvidence`), and `errors` (`ExecError` and subclasses such as `MintPausedError`, `JupiterApiError`, `PostConditionError`). `executeSwap` and the post-condition check are not called by any route; the browser sends the transaction through the wallet instead.
+Jupiter swap building and execution. The app imports `getQuote` and `getSwapTransaction` (`frontend/app/api/actions/convert/convert.ts`) and `packages/convert` imports `getQuote` and `JupiterApiError`. Modules re-exported from `packages/exec/src/index.ts`: `connection`, `fee` (`transferFeeOf`, `netAfterTransferFee`, `grossForNet`, `inForceTier`, `roundTripBps`), `mint` (`readExecMintFacts`, `execFactsFromMintFacts`), `jupiter` (`getQuote`, `getSwapTransaction`, `routeLabel`, `QUOTE_URL`, `SWAP_URL`), `build` (`buildUnsignedSwap`, `destinationAtaFor`, `readAtaState`), `execute` (`executeSwap`, `confirmFinalized`, `evaluatePostCondition`), `web` (`buildSwap`, `confirmSwap`, `readFinalizedSwapEvidence`), and `errors` (`ExecError` and subclasses such as `MintPausedError`, `JupiterApiError`, `PostConditionError`). `executeSwap` and its post-condition check serve the CLI and every `check.mjs`; in the browser the holder's wallet sends the transaction.
 
 ### @lastcall/convert (`packages/convert`)
 
@@ -45,13 +45,13 @@ Jupiter swap building and execution. The app imports `getQuote` and `getSwapTran
 
 `buildUniverse()`, `eventsForMints(mints)`, `eventsForWallet(owner)`, `batchDecodeMints(conn, mints, epoch)`, `toIcs(events)`, and types `LastCallEvent`, `ConversionEvent`, `DividendOrSplitEvent`, `FeeChangeEvent`, `PausedEvent`, `EventUrgency`, `UniverseMint`.
 
-## Not wired into the app
+### @lastcall/pyth (`packages/pyth`)
 
-These live in `packages/` but no file in `frontend/` imports them:
+Pyth Hermes pricing. Exports the feed ids and mints (`SPCX_EQUITY_FEED_ID`, `SPCXX_CRYPTO_FEED_ID`, `SPACEX_PRESTOCKS_MINT`, `SPCXX_MINT`), `fetchHermesPrices()` and `convertVsSell()`, which prices a SPACEX holding sold now against the same holding converted, with the converted SPCXx marked at a live Hermes feed instead of Jupiter's own quote. `MissingPythKeyError` is thrown instead of ever returning a made-up price. The `/inbox` Pyth panel uses it.
 
-| Package | Status |
+## Standalone packages
+
+| Package | What it does |
 |---|---|
-| `packages/slice` (`@lastcall/slice`) | Plans conversion slices under a price impact ceiling. Run only from its own CLI and `check.mjs` |
-| `packages/pyth` (`@lastcall/pyth`) | Compares selling vs converting SPACEX against a Pyth feed. Needs `PYTH_API_KEY` |
-| `packages/cost` (`@fineprint/cost`) | Leftover from an earlier project |
-| `packages/atlas`, `packages/guard-client` | Leftover directories with only `test/` and `node_modules/`, no source |
+| `packages/slice` (`@lastcall/slice`) | `planSlices()` finds the largest trade size under a price-impact ceiling in at most 8 live Jupiter quotes; `buildSlice()` builds one slice as a sponsored conversion. Runs from its own CLI and `check.mjs` |
+| `packages/cost` (`@fineprint/cost`) | On-chain versus TradFi (Forge, EquityZen, Hiive) round-trip cost comparison, carried over from the earlier project this repo grew out of |
