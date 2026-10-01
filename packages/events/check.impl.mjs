@@ -28,7 +28,7 @@ function findExtension(accountInfo, name) {
   return extensions.find((e) => e.extension === name)?.state ?? null;
 }
 
-/* 1. OPENAI fee_change: 50 -> 100 bps at epoch 1039, marked in force, cross-checked by our own RPC read. */
+/* 1. OPENAI fee_change: the event's tiers, activation epoch and in-force flag must equal our own RPC read of the mint. */
 const epochInfo = await rpc("getEpochInfo", []);
 const openaiInfo = await rpc("getAccountInfo", [OPENAI, { encoding: "jsonParsed" }]);
 const openaiFee = findExtension(openaiInfo, "transferFeeConfig");
@@ -38,21 +38,24 @@ const expectOpenaiInForce = epochInfo.epoch >= openaiFee.newerTransferFee.epoch;
 const openaiEvents = await eventsForMints([OPENAI]);
 const openaiFeeEvent = openaiEvents.find((e) => e.type === "fee_change" && e.mint === OPENAI);
 if (!openaiFeeEvent) throw new Error("red: no fee_change event for OPENAI");
-if (openaiFeeEvent.olderBps !== 50 || openaiFeeEvent.newerBps !== 100) {
-  throw new Error(`red: OPENAI fee_change bps wrong: ${JSON.stringify(openaiFeeEvent)}`);
+const chainOlderBps = Number(openaiFee.olderTransferFee.transferFeeBasisPoints);
+const chainNewerBps = Number(openaiFee.newerTransferFee.transferFeeBasisPoints);
+const chainActivation = Number(openaiFee.newerTransferFee.epoch);
+if (chainOlderBps === chainNewerBps) {
+  throw new Error(`red: test assumption broken, OPENAI tiers are identical on-chain (${chainOlderBps} bps), no fee_change to check`);
 }
-if (openaiFeeEvent.activationEpoch !== 1039) {
-  throw new Error(`red: OPENAI fee_change activationEpoch ${openaiFeeEvent.activationEpoch}, expected 1039`);
+if (openaiFeeEvent.olderBps !== chainOlderBps || openaiFeeEvent.newerBps !== chainNewerBps) {
+  throw new Error(`red: OPENAI fee_change bps wrong: event ${openaiFeeEvent.olderBps}->${openaiFeeEvent.newerBps}, chain ${chainOlderBps}->${chainNewerBps}`);
 }
-if (expectOpenaiInForce !== true) {
-  throw new Error(`red: test assumption broken, chain epoch ${epochInfo.epoch} has not reached activation epoch 1039`);
+if (openaiFeeEvent.activationEpoch !== chainActivation) {
+  throw new Error(`red: OPENAI fee_change activationEpoch ${openaiFeeEvent.activationEpoch}, chain ${chainActivation}`);
 }
 if (openaiFeeEvent.inForce !== expectOpenaiInForce) {
   throw new Error(
     `red: OPENAI fee_change inForce=${openaiFeeEvent.inForce}, independent read of epoch ${epochInfo.epoch} vs activation ${openaiFee.newerTransferFee.epoch} says ${expectOpenaiInForce}`,
   );
 }
-console.log(`ok: OPENAI fee_change 50->100bps at epoch 1039, inForce=${openaiFeeEvent.inForce} (chain epoch ${epochInfo.epoch})`);
+console.log(`ok: OPENAI fee_change ${chainOlderBps}->${chainNewerBps}bps at epoch ${chainActivation}, inForce=${openaiFeeEvent.inForce} (chain epoch ${epochInfo.epoch})`);
 
 /* 2. QQQx dividend_or_split dated 2026-09-19, percent matches our own computation from the raw mint. */
 const qqqxInfo = await rpc("getAccountInfo", [QQQX, { encoding: "jsonParsed" }]);
