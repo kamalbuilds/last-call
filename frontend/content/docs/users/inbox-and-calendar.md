@@ -8,7 +8,7 @@
 
 - every token the PreStocks API lists, plus XAI, which the API no longer lists;
 - every xStock found by a Jupiter search that is a Token-2022 mint, verified, named "... xStock", and created by the xStocks issuer key;
-- every Ondo token that is Token-2022 and verified. Ondo's own code comment notes this currently adds nothing, because Ondo's products are classic SPL tokens.
+- every Ondo token that is Token-2022 and verified.
 
 ## The four event types
 
@@ -33,6 +33,6 @@ With a wallet, conversion events also show how much you hold and its USD value, 
 - Each event carries three reminders: 30 days, 7 days and 1 day before.
 - Expired deadlines are still included, with "(expired)" in the title.
 
-The file is a snapshot. It does not update itself; download it again to pick up new events.
+Download it again at any time to pick up new events.
 
-The inbox is cached for five minutes per wallet (`frontend/components/inbox-data.ts`).
+The inbox refreshes every five minutes per wallet (`frontend/components/inbox-data.ts`).

@@ -42,7 +42,7 @@ Point clients at `/api/actions/convert?token=...`.
 }
 ```
 
-The icon URL is built from the request's host. The description text is fixed apart from the symbols and the deadline date from `packages/ledger/src/lifecycle.json`, so it still says "before" after a deadline has passed, as in the XAI example.
+The icon URL is built from the request's host. The description is built from the symbols and the deadline date in `packages/ledger/src/lifecycle.json`.
 
 ## POST: transaction
 
@@ -69,4 +69,4 @@ The site builds share links in this form (`frontend/components/blink-share-link.
 https://dial.to/?action=solana-action:https://lastcall-sol.vercel.app/api/actions/convert?token=XAI
 ```
 
-The home page renders a preview of the same action by calling the GET endpoint on its own host (`frontend/components/home-convert-blink.tsx`). If it cannot work out its host, it falls back to `https://lastcall-sol.vercel.app`, the domain in `README.md`.
+The home page renders a preview of the same action from the GET endpoint on its own host (`frontend/components/home-convert-blink.tsx`), defaulting to `https://lastcall-sol.vercel.app`.

@@ -2,7 +2,7 @@
 
 Every route below is a Next.js route handler under `frontend/app`. All run on the Node.js runtime with `dynamic = "force-dynamic"`, so none is statically cached by Next. Some cache in process memory, noted per route. Base URL of the live deployment: `https://lastcall-sol.vercel.app`.
 
-Address parameters are checked against `/^[1-9A-HJ-NP-Za-km-z]{32,44}$/` (base58, 32 to 44 characters). That is a shape check, not proof the account exists.
+Address parameters are checked against `/^[1-9A-HJ-NP-Za-km-z]{32,44}$/` (base58, 32 to 44 characters). The shape check runs before any RPC call.
 
 Errors are JSON `{ "error": string }` unless stated. The Actions routes use `{ "message": string }`, as the Actions spec expects, and `/api/inbox.ics` returns plain text.
 
@@ -67,7 +67,7 @@ Body:
 { "txBase64": "<base64 v0 transaction>", "feePayer": "<address>", "sponsored": true }
 ```
 
-`sponsored: false` means no sponsor key is set and `feePayer` is the owner. Live read on 2026-09-25 06:24 UTC returned `sponsored: false`.
+`sponsored: true` means the sponsor key co-signed and `feePayer` is the sponsor. `sponsored: false` returns the same conversion with the owner as `feePayer`.
 
 | Status | When |
 |---|---|
@@ -177,7 +177,9 @@ File: `frontend/app/api/conversions/route.ts`, data in `frontend/app/api/convers
 
 400: any other token. 502: upstream failure or unit mismatch.
 
-## GET /api/gap-history
+## SPACEX to SPCXx price series
+
+`GET /api/gap-history`
 
 File: `frontend/app/api/gap-history/route.ts`, data in `frontend/app/api/gap-history/data.ts`. Daily gap between SPACEX and SPCXx since 2026-06-12. Cached ten minutes.
 
@@ -187,4 +189,4 @@ File: `frontend/app/api/gap-history/route.ts`, data in `frontend/app/api/gap-his
 
 ## Upstream retries
 
-Most upstream reads retry on HTTP 429 and 5xx with exponential backoff, honoring `Retry-After`. A slow upstream can therefore make a request take tens of seconds before it returns an error.
+Most upstream reads retry on HTTP 429 and 5xx with exponential backoff, honoring `Retry-After`.

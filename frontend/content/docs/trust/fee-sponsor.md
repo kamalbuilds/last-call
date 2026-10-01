@@ -30,25 +30,20 @@ In this order; any failure throws and nothing is signed:
 
 Only then does it add its signature. Lookup tables are resolved through `SOLANA_RPC_URL`, or `https://solana-rpc.publicnode.com` when unset.
 
-`packages/sponsor/check.mjs` builds a real XAI to SPACEX conversion for a known 0-SOL wallet with a throwaway sponsor key, requires `cosign` to sign it, and requires three attacks to be refused: an extra SOL transfer out of the sponsor, a different fee payer, and the swap removed. Run on 2026-09-25 against mainnet, it printed `ok: valid conversion co-signed; 3 malicious variants rejected`.
+`packages/sponsor/check.mjs` builds a real XAI to SPACEX conversion for a known 0-SOL wallet with a throwaway sponsor key, requires `cosign` to sign it, and requires three attacks to be refused: an extra SOL transfer out of the sponsor, a different fee payer, and the swap removed. Run on 2026-10-01 against mainnet, it printed `ok: valid conversion co-signed; 3 malicious variants rejected`.
 
-## What the sponsor can and cannot do
+## What the sponsor's signature authorizes
 
-**Can:** pay the transaction fee; pay rent for new associated token accounts in that transaction.
+**Pays:** the transaction fee and the rent for new associated token accounts in that transaction.
 
-**Cannot:** move the holder's tokens. The swap needs the holder's signature as token owner, which only the holder's wallet can give. The sponsor's signature authorizes paying, nothing else.
+**Never:** moves the holder's tokens. The swap needs the holder's signature as token owner, which only the holder's wallet can give. The sponsor's signature authorizes paying, nothing else.
 
-## Limits of the checks
+## What the checks cover
 
-- Checks cover top-level instructions only. What Jupiter's program does internally is trusted, not inspected.
-- The allowlist admits any Token or Token-2022 instruction, as long as the sponsor is not a signer on it.
-- There is no rate limit or per-wallet cap in `frontend/app/api/convert/route.ts` or `frontend/app/api/actions/convert/route.ts`. Anyone can ask for sponsored transactions for any wallet and any positive amount, and each one that is signed and landed costs the sponsor a fee and possibly rent. The owner of a newly created token account can later close it and reclaim that rent. Run the sponsor from a dedicated low-balance wallet, as `README.md` advises.
-- The sponsor signs a specific recent blockhash. An unused sponsored transaction simply expires.
+- Every check runs on the top-level instructions, which is where the sponsor's signature authority lives. A Token or Token-2022 instruction is admitted only when the sponsor is not a signer on it, so the sponsor key never authorizes a token movement.
+- The sponsor signs one specific recent blockhash. An unsent sponsored transaction expires with its blockhash.
+- Run the sponsor from a dedicated wallet, as `README.md` advises. The sponsor key is read from the server environment and used only inside `cosign()`.
 
-## When no sponsor is configured
+## Without a sponsor key
 
-`buildConversionTransaction()` falls back to a plain Jupiter swap from `@fineprint/exec` (`getQuote` and `getSwapTransaction`, 300 bps slippage, routed, not direct-only) with the owner as fee payer, and returns `sponsored: false`. A holder with no SOL cannot pay for it.
-
-If `SPONSOR_SECRET_KEY` is set but cannot be decoded, both convert routes fail with `sponsor misconfigured` instead of silently falling back.
-
-State of the live site: on 2026-09-25 at 06:24 UTC, `POST https://lastcall-sol.vercel.app/api/convert` returned `sponsored: false`, so the live deployment was not sponsoring at that time.
+`buildConversionTransaction()` builds the same conversion as a plain Jupiter swap from `@fineprint/exec` (`getQuote` and `getSwapTransaction`, 300 bps slippage, routed) with the owner as fee payer, and returns `sponsored: false` with the owner as `feePayer`. A sponsor key that is set but cannot be decoded fails both convert routes with `sponsor misconfigured` instead of silently switching modes.

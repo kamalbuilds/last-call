@@ -1,6 +1,6 @@
 # Addresses
 
-All mainnet. "Live read" means read by the doc author on 2026-09-25 from `https://api.mainnet-beta.solana.com` or the live site.
+All mainnet. A read dated 2026-09-25 came from `https://api.mainnet-beta.solana.com` or the live site.
 
 ## PreStocks mints
 

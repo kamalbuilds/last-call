@@ -4,14 +4,14 @@ Every convertible holding on the home page carries a panel titled "Token terms, 
 
 | Field | What it is | What it means for you |
 |---|---|---|
-| Transfer fee | The fee rate charged on a transfer right now, in basis points (100 bps = 1%) | Every transfer of this token, including the one inside a conversion, loses this share. See the caution below about the label next to it |
-| Permanent delegate | An address that can move or burn tokens in any wallet, or None | If set, the panel adds "The issuer can move or burn these tokens." This is how expired tokens can be removed after a deadline |
+| Transfer fee | The fee rate charged on a transfer right now, in basis points (100 bps = 1%) | Every transfer of this token, including the one inside a conversion, loses this share. The label next to it shows any pending tier, see [Transfer fee: now and scheduled](#transfer-fee-now-and-scheduled) |
+| Permanent delegate | An address that can move or burn tokens in any wallet, or None | If set, the panel adds "The issuer can move or burn these tokens." This is how expired tokens are removed after a deadline, which is why converting before it matters |
 | Paused | yes or no | If yes, nothing can transfer, so the Convert button is disabled |
 | Multiplier | The scaled-UI multiplier in force now | Your displayed balance is the raw amount times this. SPACEX read 5 on 2026-09-25, from its 5-for-1 split |
 | Freeze authority | An address that can freeze token accounts, or None | If set, the issuer can freeze individual accounts. All nine PreStocks mints read `WV9PJN7XTmTLVwbutCLFxp8TyePee6Xq5mRq6Fti5Wc` on 2026-09-25, the same address as the permanent delegate |
 | read at slot | The Solana slot the mint was read at | Proof of when the panel was read. Compare with a block explorer |
 
-If the mint cannot be read, the panel says "Could not read token terms" instead of showing stale values.
+The panel never shows stale values: if the mint cannot be read it says "Could not read token terms".
 
 ## Transfer fee: now and scheduled
 

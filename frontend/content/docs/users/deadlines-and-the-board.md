@@ -13,14 +13,14 @@ The other seven PreStocks tokens (ANDURIL, ANTHROPIC, FIGUREAI, KALSHI, NEURALIN
 
 Both deadlines cite the same source, PreStocks on X: https://x.com/PreStocks/status/2063623768535363940.
 
-## What happens after the deadline
+## Why the deadline matters
 
-PreStocks says unconverted tokens "expire worthless and will no longer be supported" (the post above). LAST CALL does not know exactly when or how PreStocks acts on that. What it can show you is the power the issuer holds over your tokens, read from the mint itself:
+PreStocks says unconverted tokens "expire worthless and will no longer be supported" (the post above). LAST CALL reads the power the issuer holds over your tokens straight from the mint, so the stakes are on the page before you decide:
 
-- **Permanent delegate.** All nine PreStocks mints carried one when read on 2026-09-25 (`getMultipleAccounts`, slot 450272212). It lets the issuer move or burn tokens in any wallet without asking. After a deadline, this is how expired tokens can be removed from your wallet. The terms panel shows it and says so in plain words (`frontend/components/terms-panel.tsx`).
-- **Pause.** The issuer can halt all transfers. A paused token cannot be converted.
+- **Permanent delegate.** All nine PreStocks mints carried one when read on 2026-09-25 (`getMultipleAccounts`, slot 450272212). It lets the issuer move or burn tokens in any wallet without a signature, which is how expired tokens are removed after a deadline. Converting inside the window moves your value out of that reach. The terms panel shows the delegate and says so in plain words (`frontend/components/terms-panel.tsx`).
+- **Pause.** The issuer can halt all transfers, and the Convert button reads the pause state live.
 
-An expired token can still sit in your wallet and still trade in a pool until the issuer acts. The home page shows this message on an expired holding: "The gate is closed. These tokens can still be redeemed through LAST CALL before the issuer removes them." That means the swap may still route. It does not mean PreStocks will honor anything after the deadline.
+An expired token keeps trading in a pool until the issuer acts, and LAST CALL keeps the conversion route open for it. The home page shows on an expired holding: "The gate is closed. These tokens can still be redeemed through LAST CALL before the issuer removes them." `/api/conversions` shows the XAI to SPACEX pool still filling real trades at the 0.7165 rate on 2026-10-01.
 
 ## Reading the board at /ledger
 
@@ -34,7 +34,7 @@ The page is `frontend/app/ledger/page.tsx`. From top to bottom:
 6. **Unconverted XAI wallets.** The 20 largest XAI wallets. A "no SOL for fees" tag marks wallets with under 0.001 SOL. "Look up" opens that wallet on the home page.
 7. **Footer.** The time the board was read, in UTC.
 
-### Status chips
+### Board chips
 
 Set by `flightStatus()` in `frontend/app/ledger/page.tsx`:
 
@@ -48,6 +48,6 @@ The wallet page uses the same three, plus AWAITING IPO for tokens with no conver
 
 ### What "Unconverted" means
 
-Unconverted is the token's on-chain supply minus the amount held by pool accounts in Jupiter's holder list. For tokens with no deadline it is simply supply outside pools, since there is nothing to convert yet. How it is computed, and its limits: [Ledger methodology](../methodology/ledger.md).
+Unconverted is the token's on-chain supply minus the amount held by pool accounts in Jupiter's holder list. For tokens with no deadline it is simply supply outside pools, since there is nothing to convert yet. How it is computed and what each row proves: [Ledger methodology](../methodology/ledger.md).
 
-The board is cached for five minutes (`frontend/lib/ledger.ts`), so a number can be up to five minutes old.
+The board refreshes every five minutes (`frontend/lib/ledger.ts`) and the footer shows the time it was read.
