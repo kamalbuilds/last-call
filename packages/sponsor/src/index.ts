@@ -9,11 +9,40 @@ import {
 
 const COMPUTE_BUDGET = "ComputeBudget111111111111111111111111111111";
 const JUPITER_V6 = "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4";
-const ASSOCIATED_TOKEN = "ATokenGPvbdGVxr1b2hvZbsiqW5xWJ25efTNsLJA8knL";
+const ASSOCIATED_TOKEN = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
 const TOKEN_KEG = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 const TOKEN_2022 = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 
 const ALLOWLIST = new Set([COMPUTE_BUDGET, JUPITER_V6, ASSOCIATED_TOKEN, TOKEN_KEG, TOKEN_2022]);
+
+const COMPUTE_BUDGET_PROGRAM = new PublicKey(COMPUTE_BUDGET);
+
+function sponsorMaxPriorityLamports(): bigint {
+  const raw = process.env["SPONSOR_MAX_PRIORITY_LAMPORTS"];
+  if (raw !== undefined && raw.trim() !== "") {
+    const parsed = Number(raw);
+    if (Number.isFinite(parsed) && parsed >= 0) {
+      return BigInt(Math.floor(parsed));
+    }
+  }
+  return 200_000n;
+}
+
+function priorityFeeLamports(instructions: { programId: PublicKey; data: Uint8Array }[]): bigint {
+  let microLamports = 0n;
+  let units = 200_000;
+  for (const ix of instructions) {
+    if (!ix.programId.equals(COMPUTE_BUDGET_PROGRAM)) continue;
+    const data = Buffer.from(ix.data);
+    if (data.length < 1) continue;
+    if (data[0] === 2 && data.length >= 5) {
+      units = data.readUInt32LE(1);
+    } else if (data[0] === 3 && data.length >= 9) {
+      microLamports = data.readBigUInt64LE(1);
+    }
+  }
+  return (microLamports * BigInt(units)) / 1_000_000n;
+}
 
 export async function cosign(txBase64: string, sponsor: Keypair): Promise<string> {
   const tx = VersionedTransaction.deserialize(Buffer.from(txBase64, "base64"));
@@ -55,6 +84,11 @@ export async function cosign(txBase64: string, sponsor: Keypair): Promise<string
   }
   if (jupiterCount !== 1) {
     throw new Error(`expected exactly one Jupiter instruction, found ${jupiterCount}`);
+  }
+
+  const priorityFee = priorityFeeLamports(decompiled.instructions);
+  if (priorityFee > sponsorMaxPriorityLamports()) {
+    throw new Error(`priority fee ${priorityFee.toString()} lamports exceeds sponsor cap`);
   }
 
   const ataProgram = new PublicKey(ASSOCIATED_TOKEN);

@@ -2,6 +2,8 @@ import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import bs58 from "bs58";
 import { buildSponsoredConversion } from "@lastcall/convert";
 import { cosign } from "@lastcall/sponsor";
+import { checkSponsorEligibility } from "@lastcall/sponsor/eligibility";
+import { LIFECYCLE } from "@lastcall/ledger";
 import { getQuote, getSwapTransaction } from "@fineprint/exec";
 
 const TOKEN_2022_PROGRAM_ID = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
@@ -22,6 +24,20 @@ export interface ConversionBuild {
   txBase64: string;
   feePayer: string;
   sponsored: boolean;
+  sponsorRefusal?: string;
+}
+
+// Lifecycle conversion pairs eligible for sponsorship, derived from the same
+// ledger lifecycle data the convert routes use to find the destination mint.
+function allowedConversionPairs(): Array<{ from: string; to: string }> {
+  const pairs: Array<{ from: string; to: string }> = [];
+  for (const entry of Object.values(LIFECYCLE)) {
+    const intoMint = entry.conversion?.["intoMint"];
+    if (typeof entry.mint === "string" && typeof intoMint === "string") {
+      pairs.push({ from: entry.mint, to: intoMint });
+    }
+  }
+  return pairs;
 }
 
 // Shared by app/api/convert and app/api/actions/convert: sponsor pays and
@@ -41,6 +57,26 @@ export async function buildConversionTransaction(params: {
     throw new Error("sponsor misconfigured");
   }
   if (sponsor !== null) {
+    const eligibility = await checkSponsorEligibility(
+      connection,
+      { owner, fromMint, toMint, amountRaw: amountRaw.toString() },
+      allowedConversionPairs(),
+    );
+    if (!eligibility.ok) {
+      const quote = await getQuote({
+        inputMint: fromMint,
+        outputMint: toMint,
+        amount: amountRaw,
+        slippageBps: 300,
+      });
+      const swap = await getSwapTransaction({ quote, userPublicKey: owner });
+      return {
+        txBase64: swap.swapTransaction,
+        feePayer: owner,
+        sponsored: false,
+        sponsorRefusal: eligibility.reason,
+      };
+    }
     const feePayer = sponsor.publicKey.toBase58();
     const tx = await buildSponsoredConversion({
       connection,
