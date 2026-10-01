@@ -17,3 +17,4 @@ docs/*
 !docs/trust/
 !docs/reference/
 packages/*/out/
+.progress/LEDGER.md

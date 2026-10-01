@@ -1,6 +1,6 @@
 # LAST CALL: architecture
 
-A pnpm monorepo: nine packages under `packages/*` and one Next.js app, `apps/web`, that is the only consumer most users ever touch. Every package that decides money or a deadline reads live from Solana mainnet or a named API; nothing in the money path is cached longer than a few minutes, and nothing is mocked.
+A pnpm monorepo: the packages under `packages/*` and one Next.js app, `frontend/`, that is the only consumer most users ever touch. Every package that decides money or a deadline reads live from Solana mainnet or a named API; nothing in the money path is cached longer than a few minutes, and nothing is mocked.
 
 Diagram: [`docs/architecture/last-call-architecture.html`](docs/architecture/last-call-architecture.html) (interactive) or the static export below.
 
@@ -17,10 +17,9 @@ Diagram: [`docs/architecture/last-call-architecture.html`](docs/architecture/las
 | `packages/ledger` | `@lastcall/ledger` | `lifecycle.json` (deadline and conversion target per mint) plus `buildLedger()`, which joins the PreStocks API, on-chain supply, Jupiter's holders API and Jupiter search into the `/ledger` board. |
 | `packages/holdings` | `@lastcall/holdings` | `getHoldings(owner)`: a wallet's Token-2022 balances, each resolved to a lifecycle status and a live Jupiter quote into its conversion target. |
 | `packages/events` | `@lastcall/events` | `buildUniverse()` discovers every watched mint (PreStocks, xStock, Ondo); `eventsForWallet`/`eventsForMints` decode each mint's live Token-2022 config into four event types; `toIcs()` renders the dated ones as a calendar file. |
-| `packages/slice` | `@lastcall/slice` | `planSlices()` binary-searches, in at most 8 live Jupiter quotes, the largest trade size that stays under a chosen price-impact ceiling; `buildSlice()` wraps `buildSponsoredConversion` for one slice. Not called from any `apps/web` route yet; exercised from its own CLI and check. |
-| `packages/pyth` | `@lastcall/pyth` | `convertVsSell()` compares selling a SPACEX holding now against converting it, pricing the converted SPCXx against a live Pyth Hermes feed instead of trusting Jupiter's own quote as the only mark. Needs `PYTH_API_KEY`; throws rather than fabricate a price when the key is missing. |
-| `packages/cost` | `@fineprint/cost` | An on-chain-versus-TradFi (Forge, EquityZen, Hiive) round-trip cost comparison, carried over from the earlier project this repo grew out of. No route in `apps/web` imports it today. |
-| `packages/atlas`, `packages/guard-client` | | Leftover directories from that earlier project: a `test/` folder and `node_modules/` each, no source. Not part of the running app. |
+| `packages/slice` | `@lastcall/slice` | `planSlices()` binary-searches, in at most 8 live Jupiter quotes, the largest trade size that stays under a chosen price-impact ceiling; `buildSlice()` wraps `buildSponsoredConversion` for one slice. Exercised from its own CLI and `check.mjs` against live quotes. |
+| `packages/pyth` | `@lastcall/pyth` | `convertVsSell()` compares selling a SPACEX holding now against converting it, pricing the converted SPCXx against a live Pyth Hermes feed instead of trusting Jupiter's own quote as the only mark. Prices come only from the live Hermes feed: a missing key throws instead of returning a made-up number. |
+| `packages/cost` | `@fineprint/cost` | An on-chain-versus-TradFi (Forge, EquityZen, Hiive) round-trip cost comparison, carried over from the earlier project this repo grew out of. |
 
 ## Data sources
 
@@ -32,8 +31,8 @@ Diagram: [`docs/architecture/last-call-architecture.html`](docs/architecture/las
 | Jupiter datapi holders (`datapi.jup.ag/v1/holders`) | per-holder balance and SOL balance | `ledger`'s largest-wallet table and 0-SOL flag |
 | Jupiter token search (`lite-api.jup.ag/tokens/v2/search`) | xStock and Ondo discovery, filtered by Token-2022 program, verified flag and issuer signer; holder counts | `events`, `ledger` |
 | GeckoTerminal OHLCV (`api.geckoterminal.com`) | daily close prices for the SPACEX and SPCXx pools | `/api/gap-history`, cross-checked against Jupiter's live price to catch a scale mismatch |
-| PreStocks API (`prestocks.com/api/prestocks`) | the live PreStocks symbol and mint list | `ledger`, `holdings`, `events`. Rate-limits hard; both `ledger` and `holdings` fall back to the checked-in `lifecycle.json` when it fails |
-| Pyth Hermes (`hermes.pyth.network`), keyed | live SPCXX/USD and equity SPCX/USD feeds | `pyth`, only when `PYTH_API_KEY` is set |
+| PreStocks API (`prestocks.com/api/prestocks`) | the live PreStocks symbol and mint list | `ledger`, `holdings`, `events`. Read with exponential backoff; `holdings` falls back to the checked-in `lifecycle.json` mints |
+| Pyth Hermes (`hermes.pyth.network`) | live SPCXX/USD and equity SPCX/USD feeds | `pyth` and the `/inbox` Pyth panel (with `PYTH_API_KEY`) |
 
 ## Flow 1: corporate-action detection for a wallet
 
@@ -48,7 +47,7 @@ Holdings feed the inbox; the inbox feeds the calendar.
 ## Flow 2: conversion
 
 1. In the browser, `WalletLookup` reads the wallet's raw on-chain balance for the mint, then `POST`s `{owner, fromMint, amountRaw}` to `/api/convert`. (The Blink flow below reaches the same builder through `/api/actions/convert` instead.)
-2. `apps/web/lib/ledger.ts`'s `buildConversionTransaction` looks up the conversion's destination mint from the ledger, then checks whether `SPONSOR_SECRET_KEY` is set.
+2. `frontend/app/api/actions/convert/convert.ts`'s `buildConversionTransaction` looks up the conversion's destination mint from the ledger, then checks whether `SPONSOR_SECRET_KEY` is set.
    - **Sponsor configured:** `@lastcall/convert.buildSponsoredConversion` quotes the issuer's direct pool through Jupiter (trying `onlyDirectRoutes` first), requests swap instructions with the sponsor named as fee payer, rewrites any associated-token-account rent instruction still billed to the owner, and compiles an unsigned v0 transaction paid by the sponsor. `@lastcall/sponsor.cosign` then independently re-derives every instruction: fee payer must be the sponsor; every program must be on the allowlist (ComputeBudget, Jupiter v6, Associated Token, Token, Token-2022, nothing else); exactly one Jupiter instruction; the sponsor may sign only as fee payer or as an ATA-creation funder. Only after every check passes does it append the sponsor's signature.
    - **No sponsor:** a plain Jupiter swap paid by the owner.
 3. The server returns `{txBase64, feePayer, sponsored}`.
@@ -57,7 +56,7 @@ Holdings feed the inbox; the inbox feeds the calendar.
 
 ## Flow 3: Blink (Solana Action)
 
-1. `GET /actions.json` advertises this app as an action provider and maps `/convert/**` and `/api/actions/**` to it, scoped to Solana mainnet.
+1. `GET /actions.json` advertises this app as an action provider and maps `/api/actions/**` to it, scoped to Solana mainnet.
 2. `GET /api/actions/convert?token=XAI|SPACEX` returns action metadata: a title, a description built from the live deadline in `lifecycle.json`, and two action links (`amount=all`, `amount=1`).
 3. `POST /api/actions/convert?token=...&amount=...` with `{account}` resolves the amount, either the full on-chain balance or one whole token, and calls the same `buildConversionTransaction()` the `/convert` flow uses (sponsor path when configured), returning `{type: "transaction", transaction, message}`.
 4. Whatever client renders the Blink (Dialect, a wallet extension, X) shows the metadata, has the wallet sign the returned transaction, and submits it. LAST CALL never receives the signed transaction or any private key.
@@ -80,6 +79,6 @@ Every package that touches money or on-chain state ships a `check.mjs` that reco
 | `packages/sponsor/check.mjs` | Signs a real conversion and requires three attack variants to be refused. |
 | `packages/slice/check.mjs` | Re-quotes a slice and its single-shot equivalent independently; the slice must land under the impact threshold while the single shot sits above it. |
 | `packages/events/check.mjs` | Rebuilds the universe and a wallet's event list, and checks the event types and sort order against a live read. |
-| `apps/web/check*.mjs` | Build and serve the app; the board, holdings API, convert API, inbox calendar, Blink metadata and layout constraints (no yellow above 10% of text, no horizontal scroll at 375px) all answer with live data. |
+| `frontend/check*.mjs` | Build and serve the app; the board, holdings API, convert API, inbox calendar, Blink metadata and layout constraints (no yellow above 10% of text, no horizontal scroll at 375px) all answer with live data. |
 
-`pnpm proof` (`scripts/proof.mjs`) runs five of these checks (`convert-sim`, `sponsor-guard`, `ledger-recount`, `slice-plan`, `events`) as real subprocesses, keeps each command's last output line, and writes `apps/web/public/proof.json`. `/proof` (`apps/web/app/proof/page.tsx`) reads that file and shows each check's command, pass/fail and timestamp, so the page can only say a check passed if the subprocess actually exited 0 the last time someone ran it.
+`pnpm proof` (`scripts/proof.mjs`) runs five of these checks (`convert-sim`, `sponsor-guard`, `ledger-recount`, `slice-plan`, `events`) as real subprocesses, keeps each command's last output line, and writes `frontend/public/proof.json`. `/proof` (`frontend/app/proof/page.tsx`) reads that file and shows each check's command, pass/fail and timestamp, so the page can only say a check passed if the subprocess actually exited 0 the last time someone ran it.

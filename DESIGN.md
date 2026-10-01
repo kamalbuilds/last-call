@@ -22,7 +22,7 @@ A flight-information display at a real airport (Schiphol, Changi): white type on
 | `--boarding` | `#37D38C` | BOARDING status |
 | `--awaiting` | `#6B7385` | AWAITING IPO chips |
 
-Yellow or amber text above 10% of visible text elements fails `apps/web/check5.mjs`.
+Yellow or amber text above 10% of visible text elements fails `frontend/check5.mjs`.
 
 ## Type
 
@@ -43,8 +43,8 @@ Spacing on a 4px grid: 4, 8, 12, 16, 24, 32, 48, 72. Radius 6 on cards, chips an
 
 ## Copy
 
-Plain and factual. Numbers come from live reads and say when they were read. Never claim every holder is stuck on fees: most unconverted wallets can pay and simply have not converted; only wallets with no SOL need the fee sponsor.
+Plain and factual. Numbers come from live reads and say when they were read. The board and the wallet lookup are for every holder; the fee sponsor is the path for wallets with no SOL.
 
 ## Layout
 
-Content max width 1200px. Below 640px the board and tables become stacked cards; no horizontal scroll at 375px (`apps/web/check4.mjs`).
+Content max width 1200px. Below 640px the board and tables become stacked cards; no horizontal scroll at 375px (`frontend/check4.mjs`).
