@@ -40,7 +40,7 @@ Same file. Builds the conversion transaction for a Blink client.
 
 `amount=all` reads the wallet's full balance of the mint across both the Token-2022 and classic token programs. `amount=1` is one whole token (10^decimals raw units, decimals read from the mint).
 
-200: `{ type: "transaction", transaction: <base64 v0 transaction>, message: "Convert ... into ..." }`. If a sponsor is configured, the transaction arrives already signed by the sponsor.
+200: `{ type: "transaction", transaction: <base64 v0 transaction>, message: "Convert ... into ..." }`. If a sponsor is configured and the holder is eligible (see [Fee sponsor](../trust/fee-sponsor.md#who-is-sponsored)), the transaction arrives already signed by the sponsor. Otherwise it is an owner-paid Jupiter swap that needs only the holder's signature.
 
 | Status | When |
 |---|---|
@@ -67,7 +67,13 @@ Body:
 { "txBase64": "<base64 v0 transaction>", "feePayer": "<address>", "sponsored": true }
 ```
 
-`sponsored: true` means the sponsor key co-signed and `feePayer` is the sponsor. `sponsored: false` returns the same conversion with the owner as `feePayer`.
+`sponsored: true` means the sponsor key co-signed and `feePayer` is the sponsor. `sponsored: false` returns the same conversion with the owner as `feePayer`. When a sponsor is configured but the request is not eligible, the response also carries `sponsorRefusal`, the reason as a string:
+
+```json
+{ "txBase64": "<base64 v0 transaction>", "feePayer": "<owner address>", "sponsored": false, "sponsorRefusal": "sponsorship covers the full token balance only" }
+```
+
+The reasons are `conversion pair is not eligible for sponsorship`, `invalid owner or mint address`, `owner holds enough SOL to pay its own fee`, `invalid amountRaw`, `owner holds no balance of the input mint` and `sponsorship covers the full token balance only`.
 
 | Status | When |
 |---|---|

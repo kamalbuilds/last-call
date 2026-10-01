@@ -57,7 +57,7 @@ Live response on 2026-09-25 for `amount=1`:
 { "type": "transaction", "transaction": "<base64 v0 transaction>", "message": "Convert 1 XAI into SPACEX" }
 ```
 
-The transaction comes from the same `buildConversionTransaction()` the site uses (`frontend/app/api/actions/convert/convert.ts`). With a sponsor configured it is already signed by the sponsor as fee payer and needs only the holder's signature; without one the holder is the fee payer. The response has no `links.next`, so there is no follow-up step after signing. The client sends the transaction; LAST CALL never receives it signed.
+The transaction comes from the same `buildConversionTransaction()` the site uses (`frontend/app/api/actions/convert/convert.ts`). With a sponsor configured and an eligible holder (a wallet that cannot pay its own fee, converting its full balance of the source mint) it is already signed by the sponsor as fee payer and needs only the holder's signature; for any other holder, and when no sponsor is set, the holder is the fee payer and the transaction is an owner-paid swap. The reason a holder was not sponsored is the `sponsorRefusal` field of [`POST /api/convert`](http-api.md#post-apiconvert). The response has no `links.next`, so there is no follow-up step after signing. The client sends the transaction; LAST CALL never receives it signed.
 
 Errors: 400 or 502 with `{ "message": string }`, listed in [HTTP API](http-api.md#post-apiactionsconvert).
 

@@ -40,7 +40,7 @@ The schedule played out as read. On 2026-10-01 (epoch 1046, `getEpochInfo` slot 
 - Convert builds one Jupiter swap from the expiring token into its conversion target, trying the issuer's own direct pool before a routed quote. With a sponsor key set, the sponsor is the fee payer and funds the new token account, so a holder with 0 SOL converts. The holder signs; the sponsor's signature only pays.
 - `/actions.json` and `/api/actions/convert` expose the same conversion as a Solana Action (Blink): a wallet extension, Dialect, or a client reading a link or a post renders "Convert all" and "Convert 1" and has the wallet sign, without opening the site.
 - `/inbox` is a corporate-action inbox across 109 stock tokens (PreStocks, xStock and Ondo), each mint's live Token-2022 extensions decoded into four event types (conversion deadlines, dividend or split multiplier changes, fee changes, pauses), sorted action-required first. `/api/inbox.ics` exports the dated ones as a calendar file with reminders 30, 7 and 1 day out. A true-balance panel shows a holder's raw amount, the multiplier in force and the balance after dividends or splits.
-- `/compliance` decodes every tracked mint's issuer controls (freeze authority, permanent delegate, pause switch, transfer hook, default account state, mint authority) and sorts the most powerful first. `/inbox` sets Pyth Hermes prices for QQQx, TSLAx and VOOx beside Jupiter's on-chain price.
+- `/compliance` decodes every tracked mint's issuer controls (freeze authority, permanent delegate, pause switch, transfer hook, default account state, mint authority) and sorts the most powerful first. `/inbox` sets Pyth Hermes prices for QQQx, TSLAx and VOOx beside Jupiter's on-chain price, and its Pyth panel lists only feeds Hermes serves live.
 
 ## Why a plain swap is not enough
 
@@ -74,6 +74,8 @@ SPACEX converts 1:1 into SPCXx through trading, and LAST CALL prices the route b
 
 `packages/sponsor` co-signs only when every check holds: the sponsor is the fee payer; every top-level instruction belongs to ComputeBudget, Jupiter v6, the associated token program or the token programs; there is exactly one Jupiter instruction; the System program does not appear; the sponsor signs nowhere except as fee payer or as the rent funder of an associated-token-account create. Its test builds a real conversion and three attacks against it (an extra SOL transfer out of the sponsor, a different fee payer, a transaction with the swap removed) and requires all three to be refused. Re-run on 2026-10-01 against mainnet: `ok: valid conversion co-signed; 3 malicious variants rejected`.
 
+Sponsorship is scoped to the wallets that need it. `checkSponsorEligibility` (`packages/sponsor/src/eligibility.ts`) lets the sponsor co-sign only when the pair is a lifecycle conversion pair, the owner cannot pay its own fee (lamports below the live rent-exempt minimum for a token account plus 10,000), and the amount is the owner's full balance of the source mint across the Token and Token-2022 programs, so each holding is sponsored once. `cosign()` also caps the priority fee at `SPONSOR_MAX_PRIORITY_LAMPORTS` (200,000 lamports by default). A request that is not eligible still gets a conversion: `/api/convert` returns an owner-paid transaction with `sponsorRefusal` naming the reason. `packages/sponsor/check-cap.mjs` runs against a live 0-SOL XAI holder: the full balance is eligible, while an amount below the full balance, a funded wallet and a reversed pair are each refused, and the fee cap is enforced.
+
 ## Evidence
 
 Each package has a `check.mjs` that verifies the result independently of the code under test, against mainnet.
@@ -84,6 +86,7 @@ Each package has a `check.mjs` that verifies the result independently of the cod
 | `packages/ledger/check.mjs` | Recomputes unconverted XAI from the mint and holder data and requires the ledger to match within 2%. Re-run 2026-10-01: 1,473.08 against an independent 1,463.14. |
 | `packages/holdings/check.mjs` | Requires the exact on-chain XAI balance for a known holder and a quote into SPACEX in a sane range. |
 | `packages/sponsor/check.mjs` | Signs a real conversion, refuses three malicious variants. |
+| `packages/sponsor/check-cap.mjs` | Against a live 0-SOL XAI holder: full balance eligible; an amount below the full balance, funded owner and reversed pair refused; priority-fee cap enforced. |
 | `packages/slice/check.mjs` | Re-quotes a $10k-equivalent SPACEX conversion and the planned slice independently; the slice must sit under the threshold while the single swap sits above it. |
 | `frontend/check-blink.mjs` | Serves the app, requires `actions.json` and CORS, and simulates the Blink's POST transaction on mainnet. |
 | `frontend/check.mjs` | Builds and serves the app; the board, holdings API and convert API answer with live data. |

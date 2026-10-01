@@ -31,7 +31,9 @@ Jupiter swap building and execution. The app imports `getQuote` and `getSwapTran
 
 ### @lastcall/sponsor (`packages/sponsor`)
 
-`cosign(txBase64, sponsorKeypair)` returns the transaction with the sponsor's signature added, or throws. Its only export. Checks: [Fee sponsor](../trust/fee-sponsor.md).
+`cosign(txBase64, sponsorKeypair)` returns the transaction with the sponsor's signature added, or throws. It also refuses a priority fee above `SPONSOR_MAX_PRIORITY_LAMPORTS` (default 200,000 lamports). Checks: [Fee sponsor](../trust/fee-sponsor.md).
+
+The package exports a second path, `@lastcall/sponsor/eligibility`: `checkSponsorEligibility(connection, { owner, fromMint, toMint, amountRaw }, allowedPairs)` resolves to `{ ok: true }` or `{ ok: false, reason }`. It is true only for a lifecycle conversion pair, an owner whose lamports are below the rent-exempt minimum for a token account plus 10,000, and an `amountRaw` equal to the owner's full balance of the source mint across Token and Token-2022. Exports the types `SponsorEligibilityRequest`, `AllowedPair` and `SponsorEligibility`.
 
 ### @lastcall/ledger (`packages/ledger`)
 
