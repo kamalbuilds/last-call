@@ -249,7 +249,7 @@ export default async function LedgerPage(): Promise<React.ReactNode> {
       <section aria-label="Unconverted XAI wallets" className="mt-12">
         <h2 className="num text-xl font-bold text-[var(--text)]">Unconverted XAI wallets</h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-2)]">
-          Most of these wallets can still convert; they just have not. Wallets tagged no SOL for fees cannot pay the network fee, so LAST CALL can sponsor it.
+          Every wallet here can look up its holdings and convert. Wallets tagged no SOL for fees are the ones the LAST CALL sponsor covers.
         </p>
         {topXai.length === 0 ? (
           <p className="mt-3 text-sm text-[var(--text-2)]">No unconverted wallets found right now.</p>

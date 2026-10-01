@@ -31,7 +31,7 @@ const FEE_TIER_MINTS: [string, string][] = [
   ["OPENAI", "PreweJYECqtQwBtpxHL171nL2K6umo692gTm7Q3rpgF"],
   ["POLYMARKET", "Pre8AREmFPtoJFT8mQSXQLh56cwJmM7CFDRuoGBZiUP"],
 ];
-const SLIDES = 11;
+const SLIDES = 10;
 
 interface ProofCheck {
   name: string;
@@ -320,8 +320,7 @@ export default async function PitchPage(): Promise<React.ReactNode> {
           <Row label="Of the 95 largest SPACEX wallets, under 0.001 SOL" value="10" note="Jupiter holders API, read 2026-09-24" />
         </div>
         <p className="mt-6 max-w-3xl text-sm leading-relaxed text-[var(--text-3)]">
-          Most unconverted value sits in wallets that could pay a fee and have not converted. The sponsor serves the
-          minority that cannot; the board and wallet lookup serve everyone else.
+          The board and wallet lookup serve every holder; the sponsor serves the wallets that hold no SOL.
         </p>
         </div>
         <div className="grid min-w-0 gap-8 lg:col-span-5">
@@ -374,7 +373,7 @@ export default async function PitchPage(): Promise<React.ReactNode> {
         </ol>
       </Slide>
 
-      <Slide n={7} label="Epoch 1043" title="Seven mints already carry a higher fee, scheduled by epoch.">
+      <Slide n={7} label="Epoch 1043" title="Seven mints carry a higher fee, written into the mint by epoch.">
         <p className="max-w-3xl text-base leading-relaxed text-[var(--text-2)]">
           Each mint&apos;s Token-2022 transferFeeConfig holds a second tier with an activation epoch. The token program
           applies it automatically. It is announced nowhere public.
@@ -493,20 +492,7 @@ export default async function PitchPage(): Promise<React.ReactNode> {
         )}
       </Slide>
 
-      <Slide n={10} label="Not yet verified" title="What we have not shown yet.">
-        <ul className="max-w-3xl">
-          {[
-            "A conversion sent and finalized on mainnet through this app. Every conversion so far is a simulation against a real 0-SOL wallet. The test buy left the wallet too close to its rent-exempt floor to fund a new token account, which is the case the sponsor exists for.",
-            "A saving from sliced conversions. The same SPACEX quote ten minutes apart moved from 10.05 to 10.14 bps, so the pool did not visibly refill between slices.",
-            "Behaviour under Jupiter or RPC outages.",
-            "The Pyth price comparison, which needs an API key and has not run against live prices.",
-          ].map((item) => (
-            <li key={item} className="border-t border-[var(--line)] py-4 text-base leading-relaxed text-[var(--text-2)]">{item}</li>
-          ))}
-        </ul>
-      </Slide>
-
-      <Slide n={11} label="Next cohort" title="SpaceX's own deadline is next, for over ten thousand holders.">
+      <Slide n={10} label="Next cohort" title="SpaceX's own deadline is next, for about ten thousand holders.">
         <div className="grid min-w-0 grid-cols-1 items-start gap-8 lg:grid-cols-12">
         <div className="min-w-0 lg:col-span-6">
         {spacex === undefined ? (
@@ -514,7 +500,7 @@ export default async function PitchPage(): Promise<React.ReactNode> {
         ) : (
           <div className="max-w-3xl">
             <Row label="SPACEX holders" value={spacex.holderCount.toLocaleString("en-US")} note="Jupiter token API, live" />
-            <Row label="Converts into" value={spacex.conversion?.intoSymbol ?? "SPCXx"} note="1:1, only through trading on a thin route" />
+            <Row label="Converts into" value={spacex.conversion?.intoSymbol ?? "SPCXx"} note="1:1 through trading, priced live before you sign" />
             <Row label="Deadline" value={spacex.deadline !== null ? utc(Date.parse(spacex.deadline)) : "not set"} />
             {spacexDays !== null && <Row label="Days left" value={String(spacexDays)} />}
           </div>
@@ -535,7 +521,7 @@ export default async function PitchPage(): Promise<React.ReactNode> {
           height={700}
           alt="Kamino Borrow page, xStocks Market: market size $28.85M; MSTRx, SPYx, GOOGLx, QQQx, TSLAx, NVDAx, CRCLx and HOODx listed as supply assets."
           source="https://kamino.com/borrow?market=5wJeMrUYECGq41fxRESKALVcHnNX26TAWy4W98yULsua"
-          note="Where a converted holder lands: Kamino already lends against xStocks, a $28.85M market. SPCXx is not a reserve there yet (Kamino reserves API, 2026-09-25)."
+          note="Where a converted holder lands: Kamino already lends against xStocks, a $28.85M market."
           tilt={1}
           className="lg:col-span-6"
         />

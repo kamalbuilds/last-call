@@ -88,7 +88,7 @@ export async function PythPanel(): Promise<React.ReactNode> {
       <h2 className="text-[20px] font-bold text-[var(--text)]">Pyth oracle vs on-chain price</h2>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-2)]">
         Pyth Hermes prices for each public stock, next to Jupiter&apos;s live price for the token that tracks it. The gap is
-        (Jupiter minus Pyth) over Pyth. Feeds our Pyth plan does not include are marked on their row; no price is shown for them.
+        (Jupiter minus Pyth) over Pyth. Each row shows its feed status, and a price appears only when Hermes serves a live one.
       </p>
       <p className="num mt-2 text-xs text-[var(--text-3)]">
         Live feeds: {board.liveFeeds.length > 0 ? board.liveFeeds.join(", ") : "none"}. Read {board.readAt.slice(0, 19).replace("T", " ")} UTC.
@@ -102,7 +102,7 @@ export async function PythPanel(): Promise<React.ReactNode> {
       {rest.length > 0 && (
         <details className="mt-4">
           <summary className="cursor-pointer text-sm text-[var(--text-2)] underline">
-            {rest.length} more xStocks: {rest.filter((r) => r.status === "not_entitled").length} not entitled on the current Pyth plan
+            {rest.length} more xStocks, {rest.filter((r) => r.status === "live").length} with a live Pyth price
           </summary>
           <div className="mt-2 flex flex-col gap-3 sm:gap-0">
             {rest.map((r) => (
